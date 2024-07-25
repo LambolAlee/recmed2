@@ -1,0 +1,49 @@
+import sys
+import _rc
+
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon, QFontDatabase, QFont
+from PySide6.QtWidgets import QApplication
+
+
+class RecMedApp(QApplication):
+    def __init__(self, argv: list[str]):
+        super().__init__(argv)
+
+        self.initAppSettings()
+        self.initAppFont()
+
+    def initAppSettings(self):
+        self.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+        self.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
+        self.setWindowIcon(QIcon(":/logo/recmed2.png"))
+        self.setApplicationName("RecMed2")
+        self.setApplicationVersion("0.1.0")
+        self.setOrganizationName("Lambol.RecMed2")
+        self.setOrganizationDomain("recmed2.com")
+
+    def initAppFont(self):
+        self.RecMedFontID = QFontDatabase.addApplicationFont(":/font/recmed.otf")
+        font: QFont = self.font()
+        font.setPointSize(10)
+        font.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
+        self.setFont(font)
+
+    def launch(self):
+        from .recmed import RecMedWindow
+        recmed = RecMedWindow()
+        recmed.show()
+
+        self.runForever()
+
+    def getRMFont(self) -> QFont:
+        return QFont(QFontDatabase.applicationFontFamilies(self.RecMedFontID)[0])
+
+    def runForever(self):
+        sys.exit(self.exec())
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        print(exc_type, exc_value, traceback)

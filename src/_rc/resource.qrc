@@ -2,4 +2,7 @@
     <qresource prefix="/logo">
         <file alias="recmed2.png">logo/recmed2.png</file>
     </qresource>
+    <qresource prefix="/font">
+        <file alias="recmed.otf">font/fa6-pro-light.otf</file>
+    </qresource>
 </RCC>
