@@ -1,7 +1,12 @@
-def Singleton(type):
-    _instance = {}
+def Singleton(cls):
+    """Singleton class decorator."""
+    instances = {}
 
-    def __call__(cls, *args, **kwargs):
-        if cls not in _instance:
-            _instance[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return _instance[cls]
+    def instance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+
+    cls.instance = instance
+
+    return cls

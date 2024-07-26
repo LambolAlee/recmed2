@@ -13,7 +13,7 @@ class RecMedApp(QApplication):
         self.initAppSettings()
         self.initAppFont()
 
-    def initAppSettings(self):
+    def initAppSettings(self) -> None:
         self.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
         self.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
         self.setWindowIcon(QIcon(":/logo/recmed2.png"))
@@ -22,14 +22,14 @@ class RecMedApp(QApplication):
         self.setOrganizationName("Lambol.RecMed2")
         self.setOrganizationDomain("recmed2.com")
 
-    def initAppFont(self):
+    def initAppFont(self) -> None:
         self.RecMedFontID = QFontDatabase.addApplicationFont(":/font/recmed.otf")
         font: QFont = self.font()
         font.setPointSize(10)
         font.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
         self.setFont(font)
 
-    def launch(self):
+    def launch(self) -> None:
         from .recmed import RecMedWindow
         recmed = RecMedWindow()
         recmed.show()
@@ -39,7 +39,7 @@ class RecMedApp(QApplication):
     def getRMFont(self) -> QFont:
         return QFont(QFontDatabase.applicationFontFamilies(self.RecMedFontID)[0])
 
-    def runForever(self):
+    def runForever(self) -> None:
         sys.exit(self.exec())
 
     def __enter__(self):

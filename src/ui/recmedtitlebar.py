@@ -1,13 +1,13 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QMenuBar, QMenu, QLabel
+from PySide6.QtWidgets import QMenuBar, QMenu, QLabel, QWidget
 
 from qframelesswindow import TitleBar
 
 
 
 class MenuGroup:
-    def __init__(self, titleBar: TitleBar) -> None:
+    def __init__(self, titleBar: TitleBar):
         self.__menuBar = QMenuBar(titleBar)
         parent = titleBar.window()
 
@@ -37,9 +37,8 @@ class MenuGroup:
 
 
 class RecmedTitleBar(TitleBar):
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget=None):
         super().__init__(parent)
-
 
         # the index are shown below:
         # 0: white space (fixed)

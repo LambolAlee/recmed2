@@ -94,3 +94,6 @@ HOWTOPACKAGE in macOS.txt
 # QtCreator project files
 *.pyproject
 *.pyproject.user
+
+# recmed generated files and folders
+.recmed/

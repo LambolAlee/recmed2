@@ -1,13 +1,15 @@
 from qframelesswindow import FramelessMainWindow
+from PySide6.QtCore import Qt
 
 from .recmedtitlebar import RecmedTitleBar
 from ._ui import Ui_RecMedWindow
+from .openeddockwidget import OpenedDockWidget
 
-from recmedtyping import RMIconType, getIcon
+from recmedtyping import RMIconType, getIcon, ConfigKeys
 
 
 class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("RecMed2 - Lambol")
@@ -25,8 +27,12 @@ class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
             QDialog > QLabel{font-size: 15px}
         """)
 
-    def setLabelIcon(self):
-        # self.label.setScaledContents(True)
-        icon = getIcon(RMIconType.arrowsMaximize)
-        # self.label.setPixmap(QPixmap("D:\Lambol\Downloads\skadi_by_pradaestrada_ddsfm8i.png"))
+        self.initUi()
+
+    def setLabelIcon(self) -> None:
+        icon = getIcon(RMIconType.abacus)
         self.label.setPixmap(icon.pixmap(30, 30))
+
+    def initUi(self) -> None:
+        self.openedDock = OpenedDockWidget()
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.openedDock.getDockWidget(self))
