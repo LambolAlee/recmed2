@@ -3331,6 +3331,7 @@ def getIcon(icon: RMIconType) -> QIcon:
 
     painter = QPainter()
     painter.begin(pix)
+    painter.setRenderHints(QPainter.RenderHint.Antialiasing | QPainter.RenderHint.TextAntialiasing)
     painter.setFont(font)
     painter.drawText(pix.rect(), Qt.AlignmentFlag.AlignCenter, icon.value)
     painter.end()

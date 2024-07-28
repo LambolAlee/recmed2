@@ -1,10 +1,16 @@
 from pathlib import Path
 from enum import Enum, auto
+from typing import List
 
-from attrs import define, field, frozen
+from attrs import define, field
 from attrs import validators, Attribute
 
 from utils import Singleton
+
+
+
+# type alias
+RecentVaultList = List[str]
 
 
 class ConfigKeys(Enum):
@@ -12,7 +18,7 @@ class ConfigKeys(Enum):
     appConfigName: str = "recmed.ini"
 
 
-def _check_create_dirs(instance, attribute: Attribute, value: Path) -> None:
+def _check_create_dirs(instance, attribute: Attribute, value: Path) -> Path:
     if not value.exists():
         value.mkdir(parents=True)
     return value

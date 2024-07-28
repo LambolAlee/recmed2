@@ -3,9 +3,11 @@ from PySide6.QtCore import Qt
 
 from .recmedtitlebar import RecmedTitleBar
 from ._ui import Ui_RecMedWindow
+from .documentbrowser import DocumentBrowser
+from .document import Document
 from .openeddockwidget import OpenedDockWidget
 
-from recmedtyping import RMIconType, getIcon, ConfigKeys
+from recmedtyping import RMIconType, getIcon
 
 
 class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
@@ -25,14 +27,27 @@ class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
             QMenuBar{background: #F0F0F0; padding: 5px 0}
             QTextEdit{border: none; font-size: 15px}
             QDialog > QLabel{font-size: 15px}
+            QStatusBar{background: #00FF00}
         """)
 
         self.initUi()
 
     def setLabelIcon(self) -> None:
-        icon = getIcon(RMIconType.abacus)
+        icon = getIcon(RMIconType.airplay)
         self.label.setPixmap(icon.pixmap(30, 30))
 
     def initUi(self) -> None:
+        placeholder = self.browserMdiArea
+        self.browserMdiArea = DocumentBrowser(self)
+        placeholder = self.docsPage.layout().replaceWidget(placeholder, self.browserMdiArea, Qt.FindChildOption.FindDirectChildrenOnly)
+        del placeholder
+
+        # 0 -> empty document welcome page
+        # 1 -> document browser page
+        self.browserStackedPage.setCurrentIndex(1)
+        self.doc = Document(self.browserMdiArea)
+        self.doc.show()
+
+
         self.openedDock = OpenedDockWidget()
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.openedDock.getDockWidget(self))

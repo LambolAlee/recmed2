@@ -1,2 +1,5 @@
 from .recmed_ui import Ui_RecMedWindow
 from .openeddockwidget_ui import Ui_OpenedDock
+from .documentwidget_ui import Ui_DocumentWidget
+from .metadatawidget_ui import Ui_MetadataWidget
+from .contenttemplateeditor_ui import Ui_ContentTemplateEditor
