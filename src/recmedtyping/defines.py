@@ -1,5 +1,5 @@
 from pathlib import Path
-from enum import Enum, auto
+from enum import Enum, auto, StrEnum
 from typing import List
 
 from attrs import define, field
@@ -45,3 +45,6 @@ class ThemeMode(Enum):
 class Language(Enum):
     en = auto()
     zh = auto()
+
+class PluginApiNamespace(StrEnum):
+    contentWidget = "cwpluginapi"
