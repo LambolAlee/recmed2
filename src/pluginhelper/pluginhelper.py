@@ -1,16 +1,50 @@
+import sys
+
 from re import compile
 from keyword import iskeyword
 from pathlib import Path
-from typing import Iterator, cast, Optional, Self
+from typing import Iterator, Sequence, cast, Optional, Self, Tuple
 from types import ModuleType
-from importlib.util import spec_from_file_location, module_from_spec
-from importlib.abc import Loader
+
+from importlib import import_module
+from importlib.machinery import ModuleSpec, SourceFileLoader
+from importlib.abc import MetaPathFinder
 
 from attrs import define, field, Attribute, asdict
 from ujson import loads
 
 
 namePattern = compile(r'^[a-z][a-z0-9_]*$')
+
+
+class ModuleFinder(MetaPathFinder):
+    """Handles the customized directly and relatively import-statement for the plugins"""
+    def __init__(self, pluginFolder: Path):
+        self.pluginFolder = pluginFolder
+        self._prefix = "plugins"
+
+    def find_spec(self, fullname: str, path: Sequence[str] | None, target: ModuleType | None = None) -> Optional[ModuleSpec]:
+        if not fullname.startswith(self._prefix):    # filter using plugins namespace
+            return None     # None means this turn of the finder is not responsible for this module
+
+        nameParts = fullname.split('.')
+        if len(nameParts) < 2:      # load contentwidgets/plugins namespace package
+            return ModuleSpec(fullname, None, is_package=True)
+
+        # build path of plugin module or package
+        filename = self.pluginFolder.joinpath(*nameParts[1:])
+        if not filename.is_dir():
+            filename = filename / "__init__.py"
+            is_package = True
+        else:
+            filename = filename.with_suffix('.py')
+            is_package = False
+        
+        if filename.exists():
+            return ModuleSpec(fullname, SourceFileLoader(fullname, str(filename)), is_package=is_package)
+        else:
+            return None
+
 
 
 def _isValidName(instance, attribute: Attribute, name: str) -> bool:
@@ -51,42 +85,66 @@ class PluginMetadata:
             return None
 
 
+
 @define
-class PluginFinder:
-    # loadWhenFind: bool = True
-    def findPluginsInPath(self, pluginFolder: Path, _packageMetadata: PluginMetadata=PluginMetadata("","","",""), _inSubPackage: bool=False) -> Iterator[Optional[ModuleType]]:
+class PluginImporter:
+    pluginFolder: Path
+    _modFinder: ModuleFinder = field(init=False, alias="_modFinder", default=None)
+    _inWithBlock: bool = field(init=False, alias="_inWithBlock", default=False)
+
+    def __attrs_post_init__(self):
+        self._modFinder = ModuleFinder(path=self.pluginFolder)
+
+    def findPluginsInPath(self, pluginFolder: Path, _packageMetadata: PluginMetadata=PluginMetadata("","","",""), _inSubPackage: bool=False) -> Iterator[Tuple[Path, PluginMetadata]]:
         for metadataFile in pluginFolder.glob("*/metadata.json"):
             metadata = cast(PluginMetadata, PluginMetadata.fromPath(metadataFile))
             if metadata.isPackage:
                 if _inSubPackage:
-                    # the package is a subpackage of a package of plugins, don't resolve it
+                    # the package is a subpackage of a package of a plugin, don't resolve it
                     continue
                 else:
                     # the current folder is a package of plugins
                     yield from self.findPluginsInPath(metadataFile.parent, metadata, metadata.isPackage)
             else:
                 if _inSubPackage:
+                    # the current folder is a single plugin in a parent package
                     metadata = _packageMetadata.mergeMetadata(metadata)
                 # the current folder is a single plugin
-                yield self._loadPlugin(metadataFile.parent, metadata)
+                yield metadataFile.parent, metadata
 
-    def findPlugin(self, pluginPath: Path) -> Optional[ModuleType]:
+    def findPlugin(self, pluginPath: Path) -> Optional[Tuple[Path, PluginMetadata]]:
         metadata = PluginMetadata.fromPath(pluginPath / "metadata.json")
-        return self._loadPlugin(pluginPath, metadata) if metadata is not None else None
+        return (pluginPath, metadata) if metadata is not None else None
 
-    def findPluginsInPackage(self, packagePath: Path) -> Iterator[Optional[ModuleType]]:
+    def findPluginsInPackage(self, packagePath: Path) -> Iterator[Tuple[Path, PluginMetadata]]:
         metadata = PluginMetadata.fromPath(packagePath / "metadata.json")
         if metadata is None:
             return
         if metadata.isPackage:
             yield from self.findPluginsInPath(packagePath, _packageMetadata=metadata, _inSubPackage=True)
 
-    def _loadPlugin(self, pluginPath: Path, metadata: PluginMetadata) -> Optional[ModuleType]:
-        module = None
-        spec = spec_from_file_location(metadata.name, pluginPath / f"{metadata.entryPoint}.py")
-        if spec is not None:
-            module = module_from_spec(spec)
-            loader = cast(Loader, spec.loader)
-            loader.exec_module(module)
+    def path2Fullname(self, pluginPath: Path) -> str:
+        p = pluginPath.relative_to(self.pluginFolder)
+        p = self.pluginFolder.name / p
+        return '.'.join(p.parts)
+    
+    def doImport(self, pluginPath: Path, metadata: PluginMetadata) -> Optional[ModuleType]:
+        if not self._inWithBlock:
+            raise RuntimeError("When do import operation, PluginHelper must be in a 'with' block!")
+
+        try:
+            module = import_module(self.path2Fullname(pluginPath))
+        except Exception:
+            return None     # TODO: log error when finished writing log system, can also add load failed to the user interface
+        else:
             setattr(module, "metadata", metadata)
-        return module
+            return module
+
+    def __enter__(self):
+        self._inWithBlock = True
+        sys.meta_path.insert(0, self._modFinder)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._inWithBlock = False
+        sys.meta_path.remove(self._modFinder)
+        return False
