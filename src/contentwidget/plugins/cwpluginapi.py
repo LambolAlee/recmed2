@@ -1,13 +1,14 @@
 from pluggy import HookspecMarker, HookimplMarker
 from PySide6.QtWidgets import QWidget
 
-from recmedtyping import PluginApiNamespace
 from .templatetag import TemplateTag
 from .viewport import Viewport
 
 
-cwspec: HookspecMarker = HookspecMarker(PluginApiNamespace.contentWidget)
-cwimpl: HookimplMarker = HookimplMarker(PluginApiNamespace.contentWidget)
+ContentWidgetId = "cwpluginapi"
+
+cwspec: HookspecMarker = HookspecMarker(ContentWidgetId)
+cwimpl: HookimplMarker = HookimplMarker(ContentWidgetId)
 
 
 class IContentWidget:

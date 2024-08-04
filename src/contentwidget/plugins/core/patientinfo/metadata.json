@@ -1,1 +1,5 @@
-
+{
+    "name": "patientinfo",
+    "description": "Display the patient basic infomation",
+    "entryPoint": "plugin.py"
+}

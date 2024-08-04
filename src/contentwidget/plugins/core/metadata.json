@@ -1,0 +1,9 @@
+{
+    "name": "core",
+    "version": "0.0.1",
+    "source": "official",
+    "description": "Core plugin package contains the nomally used infomation widget",
+    "author": "Recmed2",
+    "namespace": "core",
+    "isPackage": true
+}

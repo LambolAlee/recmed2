@@ -2,8 +2,7 @@ from pathlib import Path
 
 from pluggy import PluginManager
 
-from recmedtyping import PluginApiNamespace
-from .cwpluginapi import cwspec
+from .plugins.cwpluginapi import cwspec, ContentWidgetId
 from pluginhelper import PluginImporter
 
 
@@ -13,14 +12,14 @@ class CWLoader:
         self.loadContentPlugins()
 
     def loadContentPlugins(self) -> None:
-        self.pm = PluginManager(PluginApiNamespace.contentWidget)
+        self.pm = PluginManager(ContentWidgetId)
         self.pm.add_hookspecs(cwspec)
 
         with PluginImporter(self.pluginFolder) as importer:
             for pluginPath, metadata in importer.findPluginsInPath(self.pluginFolder):
                 plugin = importer.doImport(pluginPath, metadata)
                 if plugin is not None:
-                    self.pm.register(plugin, metadata.getPluginNsName())
+                    self.pm.register(plugin.instance(), metadata.getPluginNsName())
 
     def getPlugin(self, name: str, namespace: str="global"):
         return self.pm.get_plugin(f"{namespace}::{name}")

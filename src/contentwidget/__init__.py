@@ -1,4 +1,4 @@
-from .cwpluginapi import cwimpl
-from . import cwpluginapi as ContentWidgetPluginApi
-from .viewport import Viewport
-from .templatetag import TemplateTag
+from .plugins import cwpluginapi as ContentWidgetPluginApi
+from .plugins.cwpluginapi import ContentWidgetId
+from .plugins.viewport import Viewport
+from .plugins.templatetag import TemplateTag

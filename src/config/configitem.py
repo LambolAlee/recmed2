@@ -21,7 +21,7 @@ class ConfigItem(Generic[T]):
         # type of the return value need to be determined by the type of self.default, and need to cast it manually
         if isinstance(self.default, list):
             size = instance.beginReadArray(self.section)
-            if size == 0:
+            if size < 1:
                 return None
             else:
                 val: Any = []

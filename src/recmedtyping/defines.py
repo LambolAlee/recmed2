@@ -45,6 +45,3 @@ class ThemeMode(Enum):
 class Language(Enum):
     en = auto()
     zh = auto()
-
-class PluginApiNamespace(StrEnum):
-    contentWidget = "cwpluginapi"
