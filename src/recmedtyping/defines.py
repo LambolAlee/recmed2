@@ -1,5 +1,5 @@
 from pathlib import Path
-from enum import Enum, auto, StrEnum
+from enum import Enum, auto
 from typing import List
 
 from attrs import define, field

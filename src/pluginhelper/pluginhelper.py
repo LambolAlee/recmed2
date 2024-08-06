@@ -73,15 +73,18 @@ class PluginMetadata:
         return f"{self.namespace}::{self.name}"
     
     def mergeMetadata(self, metadata: Self) -> Self:
-        return self.__class__(**{**asdict(self), **asdict(metadata)})
+        packageMetadata = asdict(self)
+        moduleMetadata = asdict(metadata)
+        del moduleMetadata["namespace"]
+        return self.__class__(**{**packageMetadata, **moduleMetadata})
 
     @classmethod
     def fromPath(cls, metadataFile: Path) -> Optional[Self]:
         try:
-            data = loads(metadataFile.read_text(encoding='utf-8'))
+            data: dict = loads(metadataFile.read_text(encoding='utf-8'))
             return cls(**data)
         except Exception:
-            return None
+            return None     # TODO add log
 
 
 
@@ -98,7 +101,7 @@ class PluginImporter:
     _inWithBlock: bool = field(init=False, alias="_inWithBlock", default=False)
 
     def __attrs_post_init__(self):
-        self._modFinder = ModuleFinder(path=self.pluginFolder)
+        self._modFinder = ModuleFinder(self.pluginFolder)
 
     def findPluginsInPath(self, pluginFolder: Path, _packageMetadata: PluginMetadata=PluginMetadata("","","",""), _inSubPackage: bool=False) -> Iterator[Tuple[Path, PluginMetadata]]:
         for metadataFile in pluginFolder.glob("*/metadata.json"):
@@ -128,9 +131,9 @@ class PluginImporter:
         if metadata.isPackage:
             yield from self.findPluginsInPath(packagePath, _packageMetadata=metadata, _inSubPackage=True)
 
-    def path2Fullname(self, pluginPath: Path) -> str:
+    def path2Fullname(self, pluginPath: Path, metadata: PluginMetadata) -> str:
         p = pluginPath.relative_to(self.pluginFolder)
-        p = self.pluginFolder.name / p
+        p = self.pluginFolder.name / p / metadata.entryPoint
         return '.'.join(p.parts)
 
     def doImport(self, pluginPath: Path, metadata: PluginMetadata) -> Optional[ModuleType]:
@@ -138,8 +141,9 @@ class PluginImporter:
             raise RuntimeError("When do import operation, PluginHelper must be in a 'with' block!")
 
         try:
-            module = import_module(self.path2Fullname(pluginPath))
-        except Exception:
+            module = import_module(self.path2Fullname(pluginPath, metadata))
+        except Exception as e:
+            raise
             return None     # TODO: log error when finished writing log system, can also add load failed to the user interface
         else:
             setattr(module, "metadata", metadata)
@@ -148,6 +152,7 @@ class PluginImporter:
     def __enter__(self):
         self._inWithBlock = True
         sys.meta_path.insert(0, self._modFinder)
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._inWithBlock = False

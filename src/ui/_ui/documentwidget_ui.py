@@ -25,7 +25,7 @@ class Ui_DocumentWidget(object):
         DocumentWidget.resize(1096, 659)
         self.gridLayout = QGridLayout(DocumentWidget)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.horizontalSpacer = QSpacerItem(352, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer = QSpacerItem(352, 20, QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Minimum)
 
         self.gridLayout.addItem(self.horizontalSpacer, 0, 0, 1, 1)
 
@@ -34,14 +34,14 @@ class Ui_DocumentWidget(object):
         self.scrollArea.setWidgetResizable(True)
         self.content = QWidget()
         self.content.setObjectName(u"content")
-        self.content.setGeometry(QRect(0, 0, 354, 639))
+        self.content.setGeometry(QRect(0, 0, 360, 639))
         self.gridLayout_2 = QGridLayout(self.content)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.scrollArea.setWidget(self.content)
 
         self.gridLayout.addWidget(self.scrollArea, 0, 1, 1, 1)
 
-        self.horizontalSpacer_2 = QSpacerItem(352, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(352, 20, QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Minimum)
 
         self.gridLayout.addItem(self.horizontalSpacer_2, 0, 2, 1, 1)
 

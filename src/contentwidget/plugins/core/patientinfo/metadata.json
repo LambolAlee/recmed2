@@ -1,5 +1,8 @@
 {
     "name": "patientinfo",
+    "version": "0.0.1",
+    "source": "official",
+    "author": "Recmed2",
     "description": "Display the patient basic infomation",
-    "entryPoint": "plugin.py"
+    "entryPoint": "patientinfo"
 }

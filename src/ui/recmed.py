@@ -45,8 +45,7 @@ class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
         # 0 -> empty document welcome page
         # 1 -> document browser page
         self.browserStackedPage.setCurrentIndex(1)
-        self.doc = Document(self.browserMdiArea)
-        self.doc.show()
+        self.browserMdiArea.test_view()
 
 
         self.openedDock = OpenedDockWidget()
