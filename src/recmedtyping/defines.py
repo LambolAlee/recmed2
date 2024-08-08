@@ -6,6 +6,7 @@ from attrs import define, field
 from attrs import validators, Attribute
 
 from utils import Singleton
+from contentwidget.plugins import Genders, EthnicGroup, AgeUnit
 
 
 
@@ -45,3 +46,9 @@ class ThemeMode(Enum):
 class Language(Enum):
     en = auto()
     zh = auto()
+
+
+# Enums from ContentWidget package
+Genders = Genders
+EthnicGroup = EthnicGroup
+AgeUnit = AgeUnit

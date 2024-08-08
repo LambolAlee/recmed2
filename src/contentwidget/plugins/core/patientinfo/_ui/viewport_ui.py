@@ -56,11 +56,6 @@ class Ui_PatientInfoViewport(object):
 
         self.formLayout.setWidget(1, QFormLayout.LabelRole, self.ageLabel)
 
-        self.ageSpinBox = QSpinBox(self.cardWidget)
-        self.ageSpinBox.setObjectName(u"ageSpinBox")
-
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.ageSpinBox)
-
         self.genderLabel = QLabel(self.cardWidget)
         self.genderLabel.setObjectName(u"genderLabel")
 
@@ -90,6 +85,24 @@ class Ui_PatientInfoViewport(object):
         self.ethnicGroupComboBox.setObjectName(u"ethnicGroupComboBox")
 
         self.formLayout.setWidget(4, QFormLayout.FieldRole, self.ethnicGroupComboBox)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(0)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.ageSpinBox = QSpinBox(self.cardWidget)
+        self.ageSpinBox.setObjectName(u"ageSpinBox")
+
+        self.horizontalLayout_2.addWidget(self.ageSpinBox)
+
+        self.ageUnitComboBox = QComboBox(self.cardWidget)
+        self.ageUnitComboBox.setObjectName(u"ageUnitComboBox")
+
+        self.horizontalLayout_2.addWidget(self.ageUnitComboBox)
+
+        self.horizontalLayout_2.setStretch(0, 3)
+        self.horizontalLayout_2.setStretch(1, 1)
+
+        self.formLayout.setLayout(1, QFormLayout.FieldRole, self.horizontalLayout_2)
 
 
         self.horizontalLayout.addLayout(self.formLayout)

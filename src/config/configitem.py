@@ -19,6 +19,10 @@ class ConfigItem(Generic[T]):
     def __get__(self, instance: QSettings, owner: QSettings) -> object:
         # owner is a QSettings derived object
         # type of the return value need to be determined by the type of self.default, and need to cast it manually
+        val = getattr(instance, self.item_name, None)
+        if val is not None:
+            return val
+
         if isinstance(self.default, list):
             size = instance.beginReadArray(self.section)
             if size < 1:
@@ -37,6 +41,7 @@ class ConfigItem(Generic[T]):
             instance.endArray()
         else:
             val = instance.value(self.item_name, self.default)
+        setattr(instance, self.item_name, val)
         return val
 
     def __set__(self, instance: QSettings, value: Optional[T]):

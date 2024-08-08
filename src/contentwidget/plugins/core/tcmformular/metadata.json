@@ -1,0 +1,8 @@
+{
+    "name": "tcmformular",
+    "version": "0.0.1",
+    "source": "official",
+    "author": "Recmed2",
+    "description": "Display and edit TCM Formular",
+    "entryPoint": "tcmformular"
+}

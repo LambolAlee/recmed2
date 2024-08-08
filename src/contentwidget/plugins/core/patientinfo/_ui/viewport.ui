@@ -64,9 +64,6 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QSpinBox" name="ageSpinBox"/>
-            </item>
             <item row="2" column="0">
              <widget class="QLabel" name="genderLabel">
               <property name="text">
@@ -96,6 +93,19 @@
             </item>
             <item row="4" column="1">
              <widget class="QComboBox" name="ethnicGroupComboBox"/>
+            </item>
+            <item row="1" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,1">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QSpinBox" name="ageSpinBox"/>
+              </item>
+              <item>
+               <widget class="QComboBox" name="ageUnitComboBox"/>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>

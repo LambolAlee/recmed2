@@ -4,13 +4,37 @@
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
+        {
+            "name": "Generate ContentWidget Plugin Template",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/utils/createcontentwidgethelper.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${input:pluginName}",
+                "${input:namespace}"
+            ]
+        },
         {
             "name": "Recmed2 Launcher",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/main.py",
             "console": "integratedTerminal"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "pluginName",
+            "type": "promptString",
+            "description": "Enter the name of the plugin",
+            "default": "MyPlugin"
+        },
+        {
+            "id": "namespace",
+            "type": "promptString",
+            "description": "Enter the namespace of the plugin",
+            "default": "core"
         }
     ]
 }

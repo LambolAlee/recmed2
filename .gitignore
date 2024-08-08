@@ -88,9 +88,6 @@ logo_design/
 # others
 HOWTOPACKAGE in macOS.txt
 
-# vscode settings
-.vscode/
-
 # QtCreator project files
 *.pyproject
 *.pyproject.user
