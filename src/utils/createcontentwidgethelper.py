@@ -17,7 +17,7 @@ def createContentWidgetPlugin(pluginName: str, namespace: str='global') -> bool:
     # Plugin directory
     # | _ui
     # |  | __init__.py
-    # |  | viewport.py
+    # |  | viewport.ui
     # | __init__.py
     # | plugin.py
     # | datapipe.py
@@ -28,7 +28,7 @@ def createContentWidgetPlugin(pluginName: str, namespace: str='global') -> bool:
     pluginDir.mkdir(parents=True)
     (pluginDir / '_ui').mkdir()
     (pluginDir / '_ui' / '__init__.py').touch()
-    (pluginDir / '_ui' / 'viewport.py').touch()
+    (pluginDir / '_ui' / 'viewport.ui').touch()
     (pluginDir / '__init__.py').touch()
     (pluginDir / 'plugin.py').touch()
     (pluginDir / 'datapipe.py').touch()

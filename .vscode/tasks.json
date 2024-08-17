@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate ContentWidget Plugin Template",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/src/utils/createcontentwidgethelper.py",
+                "${input:pluginName}",
+                "${input:namespace}"
+            ],
+            "group": {
+                "kind": "build"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "pluginName",
+            "type": "promptString",
+            "description": "Enter the name of the plugin",
+            "default": "MyPlugin"
+        },
+        {
+            "id": "namespace",
+            "type": "promptString",
+            "description": "Enter the namespace of the plugin",
+            "default": "core"
+        }
+    ]
+}

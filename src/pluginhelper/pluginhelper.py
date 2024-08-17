@@ -16,7 +16,9 @@ from ujson import loads
 
 
 class ModuleFinder(MetaPathFinder):
-    """Handles the customized directly and relatively import-statement inside each plugin"""
+    """
+    Handles the customized directly and relatively import-statement inside each plugin
+    """
     def __init__(self, pluginFolder: Path):
         self.pluginFolder = pluginFolder
         self._prefix = "plugins"
@@ -45,7 +47,9 @@ class ModuleFinder(MetaPathFinder):
 
 namePattern = compile(r'^[a-z][a-z0-9_]*$')
 def _isValidName(instance, attribute: Attribute, name: str) -> bool:
-    """A private attrs-validator function that is used to ensure the plugin name conforms the python naming conventions"""
+    """
+    A private attrs-validator function that is used to ensure the plugin name conforms the python naming conventions
+    """
     if not namePattern.match(name):
         return False
     if iskeyword(name):
@@ -59,7 +63,9 @@ def _isValidName(instance, attribute: Attribute, name: str) -> bool:
 
 @define
 class PluginMetadata:
-    """Metadata of a plugin, helps to locate and load a plugin"""
+    """
+    Metadata of a plugin, helps to locate and load a plugin
+    """
     name: str = field(validator=_isValidName)
     version: str
     source: str
@@ -90,7 +96,8 @@ class PluginMetadata:
 
 @define
 class PluginImporter:
-    """Exact plugin importer class, discover and load plugins in the given plugins folder
+    """
+    Exact plugin importer class, discover and load plugins in the given plugins folder
     - pluginFolder: the folder that contains all plugins
 
     when using doImport method to really import a plugin, the method call must be put into a `with` block to adapt the original

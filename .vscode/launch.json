@@ -5,36 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Generate ContentWidget Plugin Template",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/utils/createcontentwidgethelper.py",
-            "console": "integratedTerminal",
-            "args": [
-                "${input:pluginName}",
-                "${input:namespace}"
-            ]
-        },
-        {
             "name": "Recmed2 Launcher",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/main.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "CWPlugin Runner",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/src/contentwidget",
+            "module": "${input:pluginModule}",
+            "console": "integratedTerminal"
         }
     ],
     "inputs": [
         {
-            "id": "pluginName",
+            "id": "pluginModule",
             "type": "promptString",
-            "description": "Enter the name of the plugin",
-            "default": "MyPlugin"
-        },
-        {
-            "id": "namespace",
-            "type": "promptString",
-            "description": "Enter the namespace of the plugin",
-            "default": "core"
+            "description": "Enter the module format of the plugin like: a.b.c.d",
+            "default": "plugins.core.tcmformular.test"
         }
     ]
 }

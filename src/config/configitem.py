@@ -1,4 +1,4 @@
-from typing import Optional, Generic, TypeVar, Any
+from typing import Optional, Generic, TypeVar, Any, cast
 
 from attrs import define, field
 from PySide6.QtCore import QSettings
@@ -16,19 +16,19 @@ class ConfigItem(Generic[T]):
     def __attrs_post_init__(self) -> None:
         self.item_name = f"{self.section}/{self.key}"
 
-    def __get__(self, instance: QSettings, owner: QSettings) -> object:
+    def __get__(self, instance: QSettings, owner: QSettings) -> Optional[T]:
         # owner is a QSettings derived object
         # type of the return value need to be determined by the type of self.default, and need to cast it manually
-        val = getattr(instance, self.item_name, None)
-        if val is not None:
-            return val
+        cache = getattr(instance, self.item_name, self.default)
+        if cache is not None:
+            return cache
 
         if isinstance(self.default, list):
             size = instance.beginReadArray(self.section)
             if size < 1:
                 return None
             else:
-                val: Any = []
+                val = []
             
             for i in range(size):
                 instance.setArrayIndex(i)
@@ -40,9 +40,9 @@ class ConfigItem(Generic[T]):
                     val.append(instance.value(self.key, current_default))
             instance.endArray()
         else:
-            val = instance.value(self.item_name, self.default)
+            val = instance.value(self.item_name, self.default)  # type: ignore
         setattr(instance, self.item_name, val)
-        return val
+        return val  # type: ignore
 
     def __set__(self, instance: QSettings, value: Optional[T]):
         if isinstance(value, list):
