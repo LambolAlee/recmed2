@@ -59,14 +59,6 @@ class DrugEditor(QWidget, Ui_DrugEditor):
         self.drugObj.decoction = Decoction(self.decoctionComboBox.currentText())
         return self.drugObj
 
-    @staticmethod
-    def _focusOn(widget) -> bool:
-        def wrapper():
-            widget.setFocus()
-            widget.selectAll()
-            return True
-        return wrapper
-
     def focusNextPrevChild(self, next: bool) -> bool:
         """
         line 6808: https://github1s.com/qt/qtbase/blob/dev/src/widgets/kernel/qwidget.cpp
@@ -75,18 +67,25 @@ class DrugEditor(QWidget, Ui_DrugEditor):
         The editor created by delegate is not a window or subwindow, and meanwhile the parent of the editor is set to the view,
         so the default focusNextPrevChild() will call the view to handle focus changes and allows the view-related delegate to solve keypress event.
         It is right when the editor is a simple widget, but if the editor is a complex one, the tab and backtab will not work as expected.
-        
+
         commands = {fw: {True: focusNext, False: focusPrev}}
         """
+        def _focusOn(widget) -> bool:
+            def wrapper():
+                widget.setFocus()
+                widget.selectAll()
+                return True
+            return wrapper
+
         fw = self.focusWidget()
         commands = {
             self.nameEdit: {
-                True: self._focusOn(self.doseSpinBox),
+                True: _focusOn(self.doseSpinBox),
                 False: lambda: False
             },
             self.doseSpinBox: {
                 True: lambda: False,
-                False: self._focusOn(self.nameEdit)
+                False: _focusOn(self.nameEdit)
             }
         }
         return commands.get(fw, {}).get(next, lambda: super().focusNextPrevChild(next))()

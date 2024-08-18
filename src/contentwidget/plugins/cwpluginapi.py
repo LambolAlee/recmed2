@@ -1,5 +1,6 @@
 from pluggy import HookspecMarker, HookimplMarker
 from PySide6.QtWidgets import QWidget
+from typing import Protocol
 
 from .templatetag import TemplateTag
 from .viewport import Viewport
@@ -11,7 +12,7 @@ cwspec: HookspecMarker = HookspecMarker(ContentWidgetId)
 cwimpl: HookimplMarker = HookimplMarker(ContentWidgetId)
 
 
-class IContentWidget:
+class IContentWidget(Protocol):
     @cwspec
     def viewport(self, parent: QWidget) -> Viewport:
         pass

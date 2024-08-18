@@ -1,5 +1,5 @@
 from pathlib import Path
-from enum import Enum, auto
+from enum import StrEnum, Enum, auto
 from typing import List
 
 from attrs import define, field
@@ -14,9 +14,9 @@ from contentwidget.plugins import Genders, EthnicGroup, AgeUnit
 RecentVaultList = List[str]
 
 
-class ConfigKeys(Enum):
-    configFolder: str = ".recmed"
-    appConfigName: str = "recmed.ini"
+class ConfigKeys(StrEnum):
+    configFolder = ".recmed"
+    appConfigName = "recmed.ini"
 
 
 def _check_create_dirs(instance, attribute: Attribute, value: Path) -> Path:
@@ -30,12 +30,14 @@ class PathManager:
     executablePath: Path = field(init=False, validator=validators.instance_of(Path))
     rootPath: Path = field(init=False)
     workDir: Path = field(init=False, on_setattr=_check_create_dirs)
+    logDir: Path = field(init=False, on_setattr=_check_create_dirs)
     appConfigFile: Path = field(init=False)
 
     def init(self, executablePath: Path):
         self.executablePath = executablePath
         self.rootPath = executablePath.parent.parent
         self.workDir = self.rootPath / ConfigKeys.configFolder.value
+        self.logDir = self.rootPath / "logs"
         self.appConfigFile = self.workDir / ConfigKeys.appConfigName.value
 
 

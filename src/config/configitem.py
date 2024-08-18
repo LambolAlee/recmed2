@@ -1,4 +1,4 @@
-from typing import Optional, Generic, TypeVar, Any, cast
+from typing import Optional, Generic, TypeVar
 
 from attrs import define, field
 from PySide6.QtCore import QSettings

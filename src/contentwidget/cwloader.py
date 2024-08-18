@@ -16,10 +16,8 @@ class CWLoader:
         self.pm.add_hookspecs(IContentWidget)
 
         with PluginImporter(self.pluginFolder) as importer:
-            for pluginPath, metadata in importer.findPluginsInPath(self.pluginFolder):
-                plugin = importer.doImport(pluginPath, metadata)
-                if plugin is not None:
-                    self.pm.register(plugin.instance(), metadata.getPluginNsName())
+            for plugin, metadata in importer.importAllPlugins():
+                self.pm.register(plugin, metadata.getPluginNsName())
 
     def getPlugin(self, name: str, namespace: str="global"):
         return self.pm.get_plugin(f"{namespace}::{name}")
