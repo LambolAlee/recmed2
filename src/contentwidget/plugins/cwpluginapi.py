@@ -2,8 +2,6 @@ from pluggy import HookspecMarker, HookimplMarker
 from PySide6.QtWidgets import QWidget
 from typing import Protocol
 
-from .templatetag import TemplateTag
-from .viewport import Viewport
 
 
 ContentWidgetId = "cwpluginapi"
@@ -12,13 +10,47 @@ cwspec: HookspecMarker = HookspecMarker(ContentWidgetId)
 cwimpl: HookimplMarker = HookimplMarker(ContentWidgetId)
 
 
+
+class IViewport(QWidget):
+    def getDataSpec(self):
+        pass
+
+    def setData(self, data):
+        pass
+
+    def save(self):
+        pass
+
+    def switchTo(self, preview: bool=False):
+        pass
+
+    def setPluginHelper(self, pluginHelper):
+        pass
+
+
+
+class ITemplateTag:
+    def tagName(self):
+        pass
+
+    def parseTag(self, tag):
+        pass
+
+
+
+class IDisplayWindowWidget(QWidget):
+    pass
+
+
+
+
 class IContentWidget(Protocol):
     @cwspec
-    def viewport(self, parent: QWidget) -> Viewport:
+    def viewport(self, parent: QWidget) -> IViewport:
         pass
 
     @cwspec
-    def templateTag(self) -> TemplateTag:
+    def templateTag(self) -> ITemplateTag:
         pass
 
     @cwspec
@@ -33,3 +65,11 @@ class IContentWidget(Protocol):
     def setDisabled(self, disabled: bool):
         pass
 
+    @cwspec
+    def setPluginHelper(self, pluginHelper):
+        pass
+
+
+class IPluginEntry(Protocol):
+    def entry(self) -> IContentWidget:
+        pass

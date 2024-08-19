@@ -6,7 +6,7 @@ from attrs import define, field
 from attrs import validators, Attribute
 
 from utils import Singleton
-from contentwidget.plugins import Genders, EthnicGroup, AgeUnit
+from contentwidget.plugins import defines as cwDefines
 
 
 
@@ -51,6 +51,6 @@ class Language(Enum):
 
 
 # Enums from ContentWidget package
-Genders = Genders
-EthnicGroup = EthnicGroup
-AgeUnit = AgeUnit
+Genders = cwDefines.Genders
+EthnicGroup = cwDefines.EthnicGroup
+AgeUnit = cwDefines.AgeUnit

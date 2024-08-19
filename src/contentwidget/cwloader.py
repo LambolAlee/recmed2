@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pluggy import PluginManager
 
-from .plugins.cwpluginapi import IContentWidget, ContentWidgetId
+from . import ContentWidgetPluginApi
 from pluginhelper import PluginImporter
 
 
@@ -12,8 +12,8 @@ class CWLoader:
         self.loadContentPlugins()
 
     def loadContentPlugins(self) -> None:
-        self.pm = PluginManager(ContentWidgetId)
-        self.pm.add_hookspecs(IContentWidget)
+        self.pm = PluginManager(ContentWidgetPluginApi.ContentWidgetId)
+        self.pm.add_hookspecs(ContentWidgetPluginApi.IContentWidget)
 
         with PluginImporter(self.pluginFolder) as importer:
             for plugin, metadata in importer.importAllPlugins():

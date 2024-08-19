@@ -1,4 +1,3 @@
-from .cwpluginapi import cwimpl, IContentWidget
-from .viewport import Viewport as IViewport
+from .cwpluginapi import cwimpl, IContentWidget, IViewport
 
-from .defines import Genders, EthnicGroup, AgeUnit, Decoction, DrugDict, DrugUnit
+from . import defines

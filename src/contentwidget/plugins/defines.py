@@ -23,6 +23,7 @@ class Decoction(StrEnum):
     first = "先煎"
     last = "后下"
 
+
 class DrugUnit(StrEnum):
     g = "g"
 

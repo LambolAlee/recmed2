@@ -94,7 +94,7 @@ class PluginMetadata:
             data: dict = loads(metadataFile.read_text(encoding='utf-8'))
             return cls(**data)
         except Exception:
-            return None     # TODO add log
+            return None
 
 
 
@@ -155,7 +155,7 @@ class PluginImporter:
             module = import_module(self.path2Fullname(pluginPath, metadata))
         except Exception as e:
             raise
-            return None     # TODO: log error when finished writing log system, can also add load failed to the user interface
+            return None
         else:
             setattr(module, "metadata", metadata)
             return module

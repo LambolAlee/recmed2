@@ -13,4 +13,4 @@ class AppConfig(QSettings):
     recentVault: ConfigItem[RecentVaultList]  = ConfigItem("recentVault", section="Vaults", default=Factory(list))
 
     def __init__(self) -> None:
-        super().__init__(PathManager.instance().appConfigFile, QSettings.Format.IniFormat)
+        super().__init__(PathManager().appConfigFile, QSettings.Format.IniFormat)

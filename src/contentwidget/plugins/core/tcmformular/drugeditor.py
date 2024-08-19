@@ -17,22 +17,18 @@ class DrugEditor(QWidget, Ui_DrugEditor):
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setStyleSheet("DrugEditor{background-color:#f0f0f0;}")
 
-        self.unitComboBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.decoctionComboBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.unitComboBox.addItems(DrugUnit)
-        self.decoctionComboBox.addItems(Decoction)
-        self.nameEdit.setPlaceholderText("请输入药品名称")
+        self.initUi()
 
         # important to solve the focus problem when first appears on the view
         self.setFocusProxy(self.nameEdit)
         self._setDropShadow()
 
-    def setDrug(self, drugObj: DrugObject):
-        self.drugObj = drugObj
-        self.nameEdit.setText(drugObj.name)
-        self.doseSpinBox.setValue(drugObj.dose)
-        self.unitComboBox.setCurrentText(drugObj.unit)
-        self.decoctionComboBox.setCurrentText(drugObj.decoction)
+    def initUi(self) -> None:
+        self.unitComboBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.decoctionComboBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.unitComboBox.addItems(DrugUnit)
+        self.decoctionComboBox.addItems(Decoction)
+        self.nameEdit.setPlaceholderText("请输入药品名称")
 
     def _setDropShadow(self):
         e = QGraphicsDropShadowEffect(self)
@@ -41,6 +37,13 @@ class DrugEditor(QWidget, Ui_DrugEditor):
         e.setXOffset(3)
         e.setYOffset(3)
         self.setGraphicsEffect(e)
+
+    def setDrug(self, drugObj: DrugObject):
+        self.drugObj = drugObj
+        self.nameEdit.setText(drugObj.name)
+        self.doseSpinBox.setValue(drugObj.dose)
+        self.unitComboBox.setCurrentText(drugObj.unit)
+        self.decoctionComboBox.setCurrentText(drugObj.decoction)
 
     def setGeometry(self, rect: QRect):
         self.setFixedWidth(rect.width())

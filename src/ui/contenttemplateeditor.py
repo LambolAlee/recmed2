@@ -9,4 +9,4 @@ class ContentTemplateEditor(QWidget, Ui_ContentTemplateEditor):
         super().__init__(parent)
         self.setupUi(self)
         
-        # TODO the editor needs a toolbar and a beautiful theme of highlight xml code
+        # TODO: the editor needs a toolbar and a beautiful theme of highlight xml code

@@ -30,3 +30,6 @@ class TCMFormularViewport(IViewport, Ui_TCMFormularViewport):
 
     def save(self):
         pass
+
+    def switchTo(self, preview: bool=False):
+        self.viewportSwitcher.setCurrentIndex(1 if preview else 0)

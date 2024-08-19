@@ -6,7 +6,7 @@ from recmedtyping import PathManager
 
 
 def main():
-    PathManager.instance().init(Path(__file__))
+    PathManager().init(Path(__file__))
     with RecMedApp(sys.argv) as app:
         app.launch()
 

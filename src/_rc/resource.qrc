@@ -3,6 +3,6 @@
         <file alias="recmed2.png">logo/recmed2.png</file>
     </qresource>
     <qresource prefix="/font">
-        <file alias="recmed.otf">font/fa6-pro-light.otf</file>
+        <file alias="recmed-fa6">font/recmedfa6-Light.ttf</file>
     </qresource>
 </RCC>

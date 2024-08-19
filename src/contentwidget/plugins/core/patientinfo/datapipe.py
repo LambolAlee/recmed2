@@ -1,7 +1,7 @@
 from datetime import date as Date
 
 from attrs import define, field
-from ... import Genders, EthnicGroup, AgeUnit
+from ...defines import Genders, EthnicGroup, AgeUnit
 
 
 @define

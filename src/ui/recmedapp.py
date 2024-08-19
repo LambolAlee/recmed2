@@ -23,7 +23,8 @@ class RecMedApp(QApplication):
         self.setOrganizationDomain("recmed2.com")
 
     def initAppFont(self) -> None:
-        self.RecMedFontID = QFontDatabase.addApplicationFont(":/font/recmed.otf")
+        self.IconFontName = "recmed-fa6"
+        self.RecMedFontID = QFontDatabase.addApplicationFont(f":/font/{self.IconFontName}")
         font: QFont = self.font()
         font.setPointSize(10)
         font.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
@@ -37,7 +38,7 @@ class RecMedApp(QApplication):
         self.runForever()
 
     def getRMFont(self) -> QFont:
-        return QFont(QFontDatabase.applicationFontFamilies(self.RecMedFontID)[0])
+        return QFont(self.IconFontName)
 
     def runForever(self) -> None:
         sys.exit(self.exec())

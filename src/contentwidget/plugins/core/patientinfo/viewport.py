@@ -3,7 +3,8 @@ from typing import cast
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 from PySide6.QtWidgets import QSizePolicy
 
-from ... import IViewport, Genders, AgeUnit, EthnicGroup
+from ... import IViewport
+from ...defines import Genders, AgeUnit, EthnicGroup
 from ..auxiliarywidget import CardTitle
 from ._ui.viewport_ui import Ui_PatientInfoViewport
 from .datapipe import DataPipe
@@ -40,3 +41,6 @@ class PatientInfoViewport(IViewport, Ui_PatientInfoViewport):
 
     def save(self):
         pass
+
+    def switchTo(self, preview: bool=False):
+        self.viewportSwitcher.setCurrentIndex(1 if preview else 0)

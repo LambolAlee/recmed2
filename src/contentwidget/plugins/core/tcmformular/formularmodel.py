@@ -8,7 +8,7 @@ from attrs import define, field
 from PySide6.QtCore import QObject, Qt
 from PySide6.QtCore import QAbstractTableModel, QModelIndex
 
-from ... import Decoction, DrugDict, DrugUnit
+from ...defines import Decoction, DrugDict, DrugUnit
 
 
 

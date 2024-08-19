@@ -7,7 +7,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     def __init__(self, parent: QWidget=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.stackedWidget.setFixedHeight(30)   # FIXME change the name of the stackedwidget to a more reliable one
+        self.stackedWidget.setFixedHeight(30)   # FIXME: change the name of the stackedwidget to a more reliable one
 
         self.pushButton.clicked.connect(self.togglePanel)
 

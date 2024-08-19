@@ -1,1 +1,1 @@
-from .pluginhelper import PluginImporter, PluginMetadata
+from .pluginimporter import PluginImporter, PluginMetadata

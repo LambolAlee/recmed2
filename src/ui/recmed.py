@@ -28,7 +28,7 @@ class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
             QTextEdit{border: none; font-size: 15px}
             QDialog > QLabel{font-size: 15px}
             QStatusBar{background: #00FF00}
-        """)
+        """)    # TEMP: for test purpose
 
         self.initUi()
 
