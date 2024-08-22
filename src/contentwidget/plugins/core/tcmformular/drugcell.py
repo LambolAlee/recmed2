@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 from PySide6.QtCore import Qt, QPoint
-from PySide6.QtGui import QPainter, QRegion, QPalette
+from PySide6.QtGui import QPainter, QRegion
 from PySide6.QtWidgets import QWidget, QStyleOptionViewItem, QFrame
 
 from ._ui.drugcell_ui import Ui_DrugCell

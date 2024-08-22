@@ -92,7 +92,7 @@ class PluginImporter:
         try:
             yield from self.import_(None)
         except TypeError:
-            return list()
+            return list()   # TODO: add log
 
     @_ensure
     def import_(self, pluginsFolder: Optional[Path], packageInfo: Optional[PluginMetadata]=None) -> Iterator[Tuple[ModuleType, PluginMetadata]]:
