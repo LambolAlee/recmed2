@@ -1,10 +1,16 @@
 from PySide6.QtWidgets import QWidget
 
-from ... import cwimpl
+from ... import cwimpl, IContentWidget
 from .viewport import PatientInfoViewport
 
 
 
-@cwimpl
-def viewport(parent: QWidget=None):
-    return PatientInfoViewport(parent)
+class PatientInfo(IContentWidget):
+    @cwimpl
+    def viewport(self, parent: QWidget=None):
+        return PatientInfoViewport(parent)
+
+
+
+def entry():
+    return PatientInfo()

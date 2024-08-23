@@ -3,15 +3,20 @@ import sys
 from re import compile
 from keyword import iskeyword
 from pathlib import Path
-from typing import Iterator, Optional, Self, Tuple
+from typing import Iterator, Optional, Self, Tuple, Protocol
 from typing_extensions import Literal
-from types import ModuleType
 from functools import wraps
 
 from importlib import import_module
 
 from attrs import define, field, Attribute, asdict
 from ujson import loads
+
+
+
+class IPluginEntry(Protocol):
+    def entry(self):
+        pass
 
 
 
@@ -88,14 +93,14 @@ class PluginImporter:
             yield from method(self, pluginsFolder, packageInfo)
         return wrapper
 
-    def importAllPlugins(self) -> Iterator[Tuple[PluginMetadata, ModuleType]]:
+    def importAllPlugins(self) -> Iterator[Tuple[IPluginEntry, PluginMetadata]]:
         try:
             yield from self.import_(None)
         except TypeError:
             return list()   # TODO: add log
 
     @_ensure
-    def import_(self, pluginsFolder: Optional[Path], packageInfo: Optional[PluginMetadata]=None) -> Iterator[Tuple[ModuleType, PluginMetadata]]:
+    def import_(self, pluginsFolder: Optional[Path], packageInfo: Optional[PluginMetadata]=None) -> Iterator[Tuple[IPluginEntry, PluginMetadata]]:
         for p, metadata in self._findPluginsInPath(pluginsFolder, packageInfo):
             if metadata.isPackage:
                 yield from self.import_(p, metadata) # load package
@@ -114,7 +119,7 @@ class PluginImporter:
                 metadata = packageInfo.mergeMetadata(metadata)
             yield metadataFile.parent, metadata
 
-    def _loadPlugin(self, pluginFolder: Path, metadata: PluginMetadata) -> Tuple[ModuleType, PluginMetadata]:
+    def _loadPlugin(self, pluginFolder: Path, metadata: PluginMetadata) -> Tuple[IPluginEntry, PluginMetadata]:
         return import_module(f".{self._path2Fullname(pluginFolder)}", package="plugins"), metadata
 
     def _path2Fullname(self, pluginPath: Path) -> str:

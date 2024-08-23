@@ -40,8 +40,9 @@ class DrugEditor(QWidget, Ui_DrugEditor):
 
     def setDrug(self, drugObj: DrugObject):
         self.drugObj = drugObj
-        self.nameEdit.setText(drugObj.name)
-        self.doseSpinBox.setValue(drugObj.dose)
+        if not drugObj.isPlaceholder():
+            self.nameEdit.setText(drugObj.name)
+            self.doseSpinBox.setValue(drugObj.dose)
         self.unitComboBox.setCurrentText(drugObj.unit)
         self.decoctionComboBox.setCurrentText(drugObj.decoction)
 

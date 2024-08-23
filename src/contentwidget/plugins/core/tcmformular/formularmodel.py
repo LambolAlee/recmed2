@@ -4,9 +4,9 @@ from typing import List, Iterable, Self
 from collections import UserList
 from itertools import chain
 
-from attrs import define, field
-from PySide6.QtCore import QObject, Qt
-from PySide6.QtCore import QAbstractTableModel, QModelIndex
+from attrs import define, field, Factory
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import QAbstractTableModel, QModelIndex, QItemSelectionModel
 
 from ...defines import Decoction, DrugDict, DrugUnit
 
@@ -43,10 +43,14 @@ class DrugObject:
     
     def isPlaceholder(self) -> bool:
         return self.data is Placeholder.BLANK
+    
+    def clear(self) -> None:
+        self.data = Placeholder.BLANK
 
     @classmethod
-    def map(cls, arow: Iterable[DrugDict | str | None]) -> List[Self]:
-        return list(map(cls, arow))
+    def map(cls, arow: Iterable[DrugDict | Self | str | None]) -> List[Self]:
+        makeObj = lambda data: data if isinstance(data, cls) else cls(data)
+        return list(map(makeObj, arow))
 
     def __str__(self) -> str:
         if self.isPlaceholder():
@@ -65,30 +69,52 @@ class DrugObject:
 
 @define
 class Formular(UserList):
-    _formularData: DrugDict = field(alias='_formularData')
+    _formularData: List[DrugDict] = field(alias='_formularData', default=Factory(list))
     rows: int = field(init=False, default=1)
     columns: int = field(init=False, default=4)
 
     def __attrs_post_init__(self) -> None:
-        self._resetObjectWithData()
+        self._resetObjectWithData(self._formularData)
 
-    def _resetObjectWithData(self):
+    def _resetObjectWithData(self, data):
         self.data = []
-        self.rows = max(1, ceil(len(self._formularData) / self.columns))
-        for i in range(self.rows):
-            arow = self._formularData[i * self.columns:(i + 1) * self.columns]
+        self.rows = 0
+        rows = max(1, ceil(len(data) / self.columns))
+        for i in range(rows):
+            arow = data[i * self.columns:(i + 1) * self.columns]
             if len(arow) < 4:
                 arow.extend([Placeholder.BLANK] * (self.columns - len(arow)))
             self.addRow(arow)
 
+    def setData(self, formularData: List[DrugDict]):
+        self._formularData = formularData
+        self._resetObjectWithData(formularData)
+
     def addRow(self, arow: List[str]):
         self.data.append(DrugObject.map(arow))
+        self.rows += 1
 
-    def __getitem__(self, index: QModelIndex) -> DrugObject:
+    def appendEmptyRow(self):
+        self.addRow([Placeholder.BLANK] * self.columns)
+
+    def cap(self) -> int:
+        return len(chain(*self.data))
+
+    def tidy(self):
+        cleanData = []
+        for drugObj in chain(*self.data):
+            if drugObj.isPlaceholder(): continue
+            cleanData.append(drugObj)
+        self._resetObjectWithData(cleanData)
+
+    def __getitem__(self, index: QModelIndex | int) -> DrugObject | List[DrugObject]:
         """
         slicing is not supported
         """
-        return self.data[index.row()][index.column()]
+        if isinstance(index, QModelIndex):
+            return self.data[index.row()][index.column()]
+        elif isinstance(index, int):
+            return self.data[index]
 
     def __setitem__(self, index: QModelIndex, value: DrugObject):
         self.data[index.row()][index.column()] = value
@@ -97,15 +123,19 @@ class Formular(UserList):
         return chain(*self.data)
 
     def __len__(self) -> int:
-        return len(chain(*self.data))
+        return sum(not i.isPlaceholder() for i in chain(*self.data))
 
 
 
 class FormularTableModel(QAbstractTableModel):
-    def __init__(self, formularData, parent: QObject=None):
-        super().__init__(parent)
+    drugCountChanged = Signal(int)
 
-        self._formular = Formular(formularData)
+    def setFormularData(self, formularData: List[DrugDict] | None=None):
+        self._formular = Formular([] if formularData is None else formularData)
+        self._updateDrugCount()
+
+    def _updateDrugCount(self):
+        self.drugCountChanged.emit(len(self._formular))
 
     def flags(self, index: QModelIndex) -> Qt.ItemFlag:
         _flags = super().flags(index)
@@ -123,7 +153,6 @@ class FormularTableModel(QAbstractTableModel):
     def columnCount(self, parent: QModelIndex) -> int:
         """
         need the table to be in shape of 4 columns
-        when the count of the drugs less than 4, use the length of the formular instead
         """
         return self._formular.columns if not parent.isValid() else 0
 
@@ -148,6 +177,40 @@ class FormularTableModel(QAbstractTableModel):
             self._formular[index] = value
             self.dataChanged.emit(index, index, [Qt.ItemDataRole.DisplayRole])
         return True
+    
+    def insertRows(self, row: int, count: int, parent: QModelIndex=QModelIndex()) -> bool:
+        """Only used by add method when appending a new row for now"""
+        self.beginInsertRows(parent, row, row + count -1)
+        self._formular.appendEmptyRow()
+        self.endInsertRows()
+        return True
+    
+    def appendEmptyRow(self) -> None:
+        self.insertRow(self._formular.rows)
 
     def maxLengthDrug(self) -> DrugObject:
         return max(self._formular)
+
+    def tidy(self) -> None:
+        self.beginResetModel()
+        self._formular.tidy()
+        self.endResetModel()
+
+    def removeDrugs(self, selectionModel: QItemSelectionModel):
+        if not selectionModel.hasSelection():
+            return
+
+        selectedIndexes = selectionModel.selectedIndexes()
+        for index in selectedIndexes:
+            self._formular[index].clear()
+        self.dataChanged.emit(selectedIndexes[0], selectedIndexes[-1], [Qt.DisplayRole])
+
+    def add(self) -> QModelIndex:
+        column = 0
+        for drugObj in self._formular[-1]:
+            if drugObj.isPlaceholder(): break
+            column += 1
+        else:
+            self.appendEmptyRow()
+            column = 0
+        return self.index(self._formular.rows - 1, column)

@@ -25,7 +25,7 @@
             "id": "pluginModule",
             "type": "promptString",
             "description": "Enter the module format of the plugin like: a.b.c.d",
-            "default": "plugins.core.tcmformular.test"
+            "default": "plugins.core.tcmformular.viewport"
         }
     ]
 }

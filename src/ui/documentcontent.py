@@ -20,3 +20,5 @@ class DocumentContent(QWidget):
         self.loader.loadContentPlugins()
         plugin = self.loader.getPlugin("patientinfo", "core")
         self.contentlayout.addWidget(plugin.viewport(self))
+        plugin = self.loader.getPlugin("tcmformular", "core")
+        self.contentlayout.addWidget(plugin.viewport(self))

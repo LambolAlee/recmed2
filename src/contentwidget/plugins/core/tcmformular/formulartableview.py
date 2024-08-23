@@ -12,4 +12,5 @@ class FormularTableView(QTableView):
         self.setItemDelegate(self.delegate)
 
         self.verticalHeader().hide()
+        self.horizontalHeader().hide()
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)

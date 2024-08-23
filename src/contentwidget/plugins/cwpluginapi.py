@@ -1,6 +1,5 @@
 from pluggy import HookspecMarker, HookimplMarker
 from PySide6.QtWidgets import QWidget
-from typing import Protocol
 
 
 
@@ -44,7 +43,11 @@ class IDisplayWindowWidget(QWidget):
 
 
 
-class IContentWidget(Protocol):
+class IContentWidget:
+    @cwspec
+    def init(self, pluginHelper):
+        pass
+    
     @cwspec
     def viewport(self, parent: QWidget) -> IViewport:
         pass
@@ -65,11 +68,3 @@ class IContentWidget(Protocol):
     def setDisabled(self, disabled: bool):
         pass
 
-    @cwspec
-    def setPluginHelper(self, pluginHelper):
-        pass
-
-
-class IPluginEntry(Protocol):
-    def entry(self) -> IContentWidget:
-        pass
