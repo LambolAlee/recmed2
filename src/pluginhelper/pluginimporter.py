@@ -1,4 +1,6 @@
 import sys
+import logging
+logger = logging.getLogger(__name__)
 
 from re import compile
 from keyword import iskeyword
@@ -63,8 +65,9 @@ class PluginMetadata:
         try:
             data: dict = loads(metadataFile.read_text(encoding='utf-8'))
             return cls(**data)
-        except Exception:
-            return None     # TODO: add log
+        except Exception as e:
+            logger.error(f"Failed to load plugin metadata from {metadataFile}: {e}")
+            return None
 
 
 
@@ -96,8 +99,9 @@ class PluginImporter:
     def importAllPlugins(self) -> Iterator[Tuple[IPluginEntry, PluginMetadata]]:
         try:
             yield from self.import_(None)
-        except TypeError:
-            return list()   # TODO: add log
+        except Exception as e:
+            logger.error(f"Import operation failed: {e}")
+            return list()
 
     @_ensure
     def import_(self, pluginsFolder: Optional[Path], packageInfo: Optional[PluginMetadata]=None) -> Iterator[Tuple[IPluginEntry, PluginMetadata]]:

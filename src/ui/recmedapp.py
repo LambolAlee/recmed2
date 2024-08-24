@@ -5,6 +5,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QFontDatabase, QFont
 from PySide6.QtWidgets import QApplication
 
+from recmedtyping import PathManager
+from logger import LoggingServer, configLogEnviron
+
 
 class RecMedApp(QApplication):
     def __init__(self, argv: list[str]):
@@ -32,10 +35,13 @@ class RecMedApp(QApplication):
 
     def launch(self) -> None:
         from .recmed import RecMedWindow
-        recmed = RecMedWindow()
-        recmed.show()
+        with LoggingServer(PathManager().logDir) as server:
+            configLogEnviron(server.message_queue)
 
-        self.runForever()
+            recmed = RecMedWindow()
+            recmed.show()
+
+            self.runForever()
 
     def getRMFont(self) -> QFont:
         return QFont(self.IconFontName)
