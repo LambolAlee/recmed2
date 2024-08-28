@@ -5,4 +5,7 @@
     <qresource prefix="/font">
         <file alias="recmed-fa6">font/recmedfa6-Light.ttf</file>
     </qresource>
+    <qresource prefix="/colorwidget">
+        <file alias="alphaback">alphaback.png</file>
+    </qresource>
 </RCC>

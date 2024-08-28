@@ -16,13 +16,13 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/src/contentwidget",
-            "module": "${input:pluginModule}",
+            "module": "${input:modulePath}",
             "console": "integratedTerminal"
         }
     ],
     "inputs": [
         {
-            "id": "pluginModule",
+            "id": "modulePath",
             "type": "promptString",
             "description": "Enter the module format of the plugin like: a.b.c.d",
             "default": "plugins.core.tcmformular.viewport"

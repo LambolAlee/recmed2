@@ -6,6 +6,7 @@ from ._ui import Ui_RecMedWindow
 from .documentbrowser import DocumentBrowser
 from .document import Document
 from .openeddockwidget import OpenedDockWidget
+from utils import fillPlaceholderWidget
 
 from recmedtyping import RMIconType, getIcon
 
@@ -37,10 +38,7 @@ class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
         self.label.setPixmap(icon.pixmap(30, 30))
 
     def initUi(self) -> None:
-        placeholder = self.browserMdiArea
-        self.browserMdiArea = DocumentBrowser(self)
-        placeholder = self.docsPage.layout().replaceWidget(placeholder, self.browserMdiArea, Qt.FindChildOption.FindDirectChildrenOnly)
-        del placeholder
+        self.browserMdiArea = fillPlaceholderWidget(self.browserMdiArea, DocumentBrowser(self), self.docsPage.layout())
 
         # 0 -> empty document welcome page
         # 1 -> document browser page

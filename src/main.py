@@ -8,7 +8,8 @@ from recmedtyping import PathManager
 def main():
     PathManager().init(Path(__file__))
     with RecMedApp(sys.argv) as app:
-        app.launch()
+        # app.launch()
+        app.testUi()
 
 
 if __name__ == '__main__':

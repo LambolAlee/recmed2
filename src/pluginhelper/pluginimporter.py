@@ -65,8 +65,8 @@ class PluginMetadata:
         try:
             data: dict = loads(metadataFile.read_text(encoding='utf-8'))
             return cls(**data)
-        except Exception as e:
-            logger.error(f"Failed to load plugin metadata from {metadataFile}: {e}")
+        except TypeError as e:  # invalid metadataFile content
+            logger.warning(f"Failed to load plugin metadata from {metadataFile}: {e}")
             return None
 
 

@@ -94,3 +94,4 @@ HOWTOPACKAGE in macOS.txt
 
 # recmed generated files and folders
 .recmed/
+logs/

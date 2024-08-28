@@ -42,6 +42,12 @@ class RecMedApp(QApplication):
             recmed.show()
 
             self.runForever()
+    
+    def testUi(self) -> None:
+        from test.test_colorwheel import Test
+        t = Test()
+        t.test()
+        self.runForever()
 
     def getRMFont(self) -> QFont:
         return QFont(self.IconFontName)
