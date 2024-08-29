@@ -58,3 +58,9 @@ def string2QColor(string: str, alpha: bool) -> QColor:
         m = regex_func_rgba.match(string)
         if m:
             return QColor(int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4)))
+    
+    return QColor(-1, -1, -1)
+
+
+def colorLumaF(color: QColor) -> float:
+    return 0.30 * color.redF() + 0.59 * color.greenF() + 0.11 * color.blueF();
