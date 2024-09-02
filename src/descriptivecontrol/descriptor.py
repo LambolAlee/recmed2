@@ -4,9 +4,19 @@ from functools import wraps
 from PySide6.QtWidgets import QWidget
 
 
-descriptiveDunderMethod = "__descriptive_controls__"
+
+descriptiveDunderMethod = "__descriptors__"
+
 
 class DescriptiveAttr:
+    """
+    base class for descriptive attributes
+    must implement the widget method
+    """
+
+    def widget(self, parent: QWidget | None=None) -> "DescriptiveWidget":
+        raise NotImplementedError
+
     def __set_name__(self, owner, name):
         self.public_name = name
         self.private_name = f'_{owner.__name__}_{name}'
@@ -18,25 +28,24 @@ class DescriptiveAttr:
         setattr(obj, self.private_name, value)
 
 
+
 class DescriptiveWidget(QWidget):
+    """
+    widget created by a descriptive attribute for configuring the value contained by the attribute
+    """
     def setData(self, **kwargs):
-        pass
+        raise NotImplementedError
 
     def data(self):
-        pass
-
-
-
-def getDesciptor(obj: DescriptiveAttr, attr: str) -> DescriptiveAttr:
-    return type(obj).__dict__[attr]
-
-
-def getDesciptors(obj: DescriptiveAttr) -> MappingProxyType[str, DescriptiveAttr]:
-    return getattr(obj, descriptiveDunderMethod)
+        raise NotImplementedError
 
 
 
 def descriptiveContainer(cls):
+    """
+    class decrator for classes that have descriptive attributes
+    it can collect the descriptive attributes and allow the users to get and set them via the []operator
+    """
     dattrs = {}
 
     class WrapperSubscriptable(cls):
@@ -61,3 +70,12 @@ def descriptiveContainer(cls):
         setattr(instance, descriptiveDunderMethod, MappingProxyType(dattrs))
         return instance
     return wrapper
+
+
+
+# Helper functions to get DescriptiveAttrs from an instance decorated with descriptiveContainer
+def getDesciptor(obj, attr: str) -> DescriptiveAttr:
+    return type(obj).__dict__[attr]
+
+def getDesciptors(obj) -> MappingProxyType[str, DescriptiveAttr]:
+    return getattr(obj, descriptiveDunderMethod)
