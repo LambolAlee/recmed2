@@ -1,25 +1,27 @@
-from typing import Optional, Self, Any, Dict
+from typing import Optional, Self, Union
 
-from attrs import define, field
 from PySide6.QtGui import QColor
 
 from recmedtyping import RMIconType
+from descriptivecontrol import DColor, descriptiveContainer
 
 
 
-@define
+@descriptiveContainer
 class Tag:
-    name: str
-    bg: QColor = field(converter=QColor, default="#18b868")
-    fg: QColor = field(converter=QColor, default="#000000")
-    metadata: str = ""
-    icon: Optional[RMIconType] = None
-    _textIcon: bool = field(init=False, alias='_textIcon')
+    bg: QColor = DColor(text="background-color", default="#18b868")
+    fg: QColor = DColor(text="font-color", default="#000000")
 
-    def __attrs_post_init__(self) -> None:
+    def __init__(self, name: str, bg: Union[str, QColor, None]=None, fg: Union[str, QColor, None]=None, icon: Optional[RMIconType]=None) -> None:
         """
         fix the appearnce of both icon and textIcon, use icon first
         """
+        self.name = name
+        self.bg = bg
+        self.fg = fg
+        self.icon = icon
+
+        # FIXME
         icon_ = self._parseTextIcon()
         if self.icon is None:
             self.icon = icon_

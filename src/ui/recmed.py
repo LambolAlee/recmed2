@@ -45,6 +45,5 @@ class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
         self.browserStackedPage.setCurrentIndex(1)
         self.browserMdiArea.test_view()
 
-
         self.openedDock = OpenedDockWidget()
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.openedDock.getDockWidget(self))

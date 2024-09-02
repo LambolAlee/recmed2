@@ -1,17 +1,17 @@
-from typing import Optional
+from typing import Optional, Self
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QMouseEvent
+from PySide6.QtGui import QFocusEvent, QKeyEvent, QMouseEvent
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QLayout
 
 from tag import Tag
 from recmedtyping import RMIconType, getIcon
-from utils import FlowLayout
 
 
 
 class PillTagWidget(QWidget):
     deleteButtonClicked = Signal()
+    editing = Signal(object)
 
     def __init__(self, tag: Optional[Tag]=None, parent: QWidget | None=None):
         super().__init__(parent)
@@ -20,6 +20,8 @@ class PillTagWidget(QWidget):
         self._iconOnly = False
         if tag is not None:
             self.tag = tag
+
+        self._inEdit = False
 
     @property
     def tag(self) -> Tag:
@@ -59,6 +61,7 @@ class PillTagWidget(QWidget):
         self.setLayout(layout)
 
     def setEditMode(self, editMode: bool):
+        self._inEdit = editMode
         self.deleteButton.setVisible(editMode)
 
     def updateUi(self):
@@ -70,56 +73,22 @@ class PillTagWidget(QWidget):
         else:
             self.label.setText(self._tag.name)
 
-
         self.label.setStyleSheet(f"color: {self._tag.fg.name()};")
-        self.setStyleSheet(f"background: {self._tag.bg.name()}; border-radius: 10px;")
+        self.setStyleSheet(f"background: {self._tag.bg.name()}; border-radius: 12px;")
 
-    def mouseReleaseEvent(self, event: QMouseEvent):
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.MouseButton.LeftButton:
-            p = event.position()
-            if self.label.geometry().contains(p.toPoint()):
-                print("label clicked")
-                self.setEditMode(True)
-                return True
-            elif self.deleteButton.isVisible() and self.deleteButton.geometry().contains(p.toPoint()):
+            p = event.position().toPoint()
+            if self.deleteButton.isVisible() and self.deleteButton.geometry().contains(p):
                 self.deleteButtonClicked.emit()
-                return True
+                return
         return super().mouseReleaseEvent(event)
-
-
-
-class TagContainer(QWidget):
-    def __init__(self, parent: QWidget | None=None) -> None:
-        super().__init__(parent)
-
-        self.taglayout = FlowLayout()
-        self.taglayout.setSpacing(4)
-        self.setLayout(self.taglayout)
-
-        self._tagwidgets = []
-        self._edit = False
-
-    def addTag(self, *tags: Tag):
-        for tag in tags:
-            pill = PillTagWidget(tag, self)
-            pill.deleteButtonClicked.connect(lambda pill=pill: self.removeTag(pill))
-            self.taglayout.addWidget(pill)
-            self._tagwidgets.append(pill)
-
-    def removeTag(self, pill: PillTagWidget):
-        self._tagwidgets.remove(pill)
-        self.taglayout.removeWidget(pill)
-        pill.deleteButtonClicked.disconnect()
-        pill.deleteLater()
-
-    def clear(self) -> None:
-        for pill in self._tagwidgets:
-            self.removeTag(pill)
-
-    def setEditMode(self, editMode: bool):
-        self._edit = editMode
-        for pill in self._tagwidgets:
-            pill.setEditMode(editMode)
-
-    def isInEdit(self) -> bool:
-        return self._edit
+    
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.LeftButton:
+            p = event.position().toPoint()
+            if self.label.geometry().contains(p):
+                if self._inEdit:
+                    self.editing.emit(self)
+                return
+        return super().mouseDoubleClickEvent(event)

@@ -42,7 +42,6 @@ class IDisplayWindowWidget(QWidget):
 
 
 
-
 class IContentWidget:
     @cwspec
     def init(self, pluginHelper):

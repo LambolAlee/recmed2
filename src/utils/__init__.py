@@ -4,7 +4,7 @@ which means some of them are not used in the final version.
 """
 
 from .singleton import Singleton
-from .flowlayout import FlowLayout
+from .flowlayout import FlowLayout, getMaxMinimumSize
 
 
 from PySide6.QtCore import Qt

@@ -9,6 +9,15 @@ from PySide6.QtWidgets import QLayout,QWidget, QLayoutItem, QStyle, QSizePolicy
 
 
 
+def getMaxMinimumSize(widgets: List[QWidget], parent: QWidget):
+    size = QSize()
+    for widget in widgets:
+        size = size.expandedTo(widget.minimumSize())
+    margins = parent.contentsMargins()
+    size += QSize(margins.top() + margins.bottom(), margins.left() + margins.right())
+    return size
+
+
 class FlowLayout(QLayout):
     def __init__(self, parent: QWidget | None=None, margin: int=-1, hSpacing: int=-1, vSpacing: int=-1) -> None:
         super().__init__(parent)
@@ -61,13 +70,7 @@ class FlowLayout(QLayout):
             return None
 
     def minimumSize(self) -> QSize:
-        size = QSize()
-        for item in self.itemList:
-            size = size.expandedTo(item.minimumSize())
-
-        margins: QMargins = self.contentsMargins()
-        size += QSize(margins.left() + margins.right(), margins.top() + margins.bottom())
-        return size
+        return getMaxMinimumSize(self.itemList, self)
 
     def setGeometry(self, rect: QRect) -> None:
         super().setGeometry(rect)
