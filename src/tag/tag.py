@@ -3,16 +3,24 @@ from typing import Optional, Self, Union
 from PySide6.QtGui import QColor
 
 from recmedtyping import RMIconType
-from descriptivecontrol import DColor, descriptiveContainer
+from descriptivecontrol import descriptiveContainer, dtypes
 
 
 
 @descriptiveContainer
 class Tag:
-    bg: QColor = DColor(text="background-color", default="#18b868")
-    fg: QColor = DColor(text="font-color", default="#000000")
+    name: str = dtypes.DStr("tag name")
+    bg: QColor = dtypes.DColor(text="background-color", default="#18b868")
+    fg: QColor = dtypes.DColor(text="font-color", default="#000000")
+    icon: RMIconType = dtypes.DIcon("icon")
+    iconOnly: bool = dtypes.DBool("icon-only", default=False)
 
-    def __init__(self, name: str, bg: Union[str, QColor, None]=None, fg: Union[str, QColor, None]=None, icon: Optional[RMIconType]=None) -> None:
+    def __init__(self, 
+                 name: str, 
+                 bg: Union[str, QColor, None]=None, 
+                 fg: Union[str, QColor, None]=None, 
+                 icon: Optional[RMIconType]=None,
+                 iconOnly: bool=False) -> None:
         """
         fix the appearnce of both icon and textIcon, use icon first
         """
@@ -20,11 +28,13 @@ class Tag:
         self.bg = bg
         self.fg = fg
         self.icon = icon
+        self.iconOnly = iconOnly
 
-        # FIXME
-        icon_ = self._parseTextIcon()
+        self.setTextIcon()
+
+    def setTextIcon(self):
         if self.icon is None:
-            self.icon = icon_
+            self.icon = self._parseTextIcon()
             self._textIcon = True
         else:
             self._textIcon = False

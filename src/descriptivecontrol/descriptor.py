@@ -1,4 +1,5 @@
 from types import MappingProxyType
+from typing import Self
 from functools import wraps
 
 from PySide6.QtWidgets import QWidget
@@ -17,6 +18,9 @@ class DescriptiveAttr:
     def widget(self, parent: QWidget | None=None) -> "DescriptiveWidget":
         raise NotImplementedError
 
+    def displayName(self) -> str:
+        return ""
+
     def __set_name__(self, owner, name):
         self.public_name = name
         self.private_name = f'_{owner.__name__}_{name}'
@@ -33,10 +37,13 @@ class DescriptiveWidget(QWidget):
     """
     widget created by a descriptive attribute for configuring the value contained by the attribute
     """
-    def setData(self, **kwargs):
+    def build(self) -> Self:
         raise NotImplementedError
 
-    def data(self):
+    def setData(self, **kwargs) -> None:
+        raise NotImplementedError
+
+    def data(self) -> dict:
         raise NotImplementedError
 
 

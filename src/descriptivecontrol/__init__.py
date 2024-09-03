@@ -1,4 +1,4 @@
-from .dcolor import DColor
+from . import dtypes
 from .descriptor import (
     descriptiveContainer, 
     getDesciptor, 

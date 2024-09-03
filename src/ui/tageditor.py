@@ -46,7 +46,7 @@ class TagEditor(QWidget, Ui_TagEditor):
             widget = dattr.widget(self)
             widget.setData(**{name: pill.tag[name]})
             self._widgetList.append(widget)
-            self.tagItemLayout.addRow(dattr.text, widget)
+            self.tagItemLayout.addRow(dattr.displayName(), widget)
         self.resize(self.sizeHint())
         return self
 

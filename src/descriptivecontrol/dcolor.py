@@ -18,6 +18,7 @@ class DColorWidget(DescriptiveWidget):
     def build(self) -> Self:
         layout = QHBoxLayout()
         layout.setSpacing(0)
+        layout.setContentsMargins(0,0,0,0)
         self.lineEdit = ColorLineEdit(parent=self)
         self.lineEdit.setMinimumWidth(120)
         layout.addWidget(self.lineEdit)
@@ -30,14 +31,13 @@ class DColorWidget(DescriptiveWidget):
         self.colorButton.clicked.connect(self.onColorButtonClicked)
         return self
 
-    def setData(self, **kwargs) -> Self:
+    def setData(self, **kwargs) -> None:
         """
         color: QColor
         """
         for key, value in kwargs.items():
             if key == self.attr.public_name:
                 self.lineEdit.setColor(value, True)
-        return self
 
     def data(self) -> dict:
         return {self.attr.public_name: self.lineEdit.color}
@@ -51,7 +51,7 @@ class DColorWidget(DescriptiveWidget):
 
 
 class DColor(DescriptiveAttr):
-    def __init__(self, text: str, default: str) -> None:
+    def __init__(self, text: str, default: str | QColor) -> None:
         super().__init__()
         self._default = QColor(default)
         self.text = text
@@ -60,11 +60,11 @@ class DColor(DescriptiveAttr):
         _widget = DColorWidget(self, parent=parent).build()
         return _widget
 
+    def displayName(self) -> str:
+        return self.text
+
     def __get__(self, obj, cls) -> QColor:
-        if hasattr(obj, self.private_name):
-            return getattr(obj, self.private_name)
-        else:
-            return self._default
+        return getattr(obj, self.private_name, self._default)
 
     def __set__(self, obj, value):
         if value is None:

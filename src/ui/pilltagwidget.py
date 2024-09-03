@@ -1,6 +1,6 @@
 from typing import Optional, Self
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, Property
 from PySide6.QtGui import QFocusEvent, QKeyEvent, QMouseEvent
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QLayout
 
@@ -13,14 +13,11 @@ class PillTagWidget(QWidget):
     deleteButtonClicked = Signal()
     editing = Signal(object)
 
-    def __init__(self, tag: Optional[Tag]=None, parent: QWidget | None=None):
+    def __init__(self, tag: Tag, parent: QWidget | None=None):
         super().__init__(parent)
         self.setupUi()
 
-        self._iconOnly = False
-        if tag is not None:
-            self.tag = tag
-
+        self.tag = tag
         self._inEdit = False
 
     @property
@@ -30,15 +27,6 @@ class PillTagWidget(QWidget):
     @tag.setter
     def tag(self, tag: Tag):
         self._tag = tag
-        self.updateUi()
-
-    @property
-    def iconOnly(self) -> bool:
-        return self._iconOnly
-
-    @iconOnly.setter
-    def iconOnly(self, iconOnly: bool):
-        self._iconOnly = iconOnly
         self.updateUi()
 
     def setupUi(self):
@@ -66,7 +54,7 @@ class PillTagWidget(QWidget):
 
     def updateUi(self):
         if self._tag.hasIcon():
-            if self._iconOnly or self._tag.isTextIconTag():
+            if self._tag.iconOnly or self._tag.isTextIconTag():
                 self.label.setText(f'<font style="font-family:recmed-fa6; margin-right: 5px">{self._tag.icon.value}</font>')
             else:
                 self.label.setText(f'<font style="font-family:recmed-fa6; margin-right: 5px">{self._tag.icon.value}</font> {self._tag.name}')
