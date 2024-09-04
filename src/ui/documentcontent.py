@@ -6,10 +6,10 @@ class DocumentContent(QWidget):
     def __init__(self, parent: QWidget=None):
         super().__init__(parent)
         # TODO: Add MetadataWidget and ContentBox widgets to a vertical layout
-        self.initUi()
+        self.build()
         self.test_view()
 
-    def initUi(self):
+    def build(self):
         self.contentlayout = QVBoxLayout(self)
         self.contentlayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.setLayout(self.contentlayout)

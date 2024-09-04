@@ -3,7 +3,7 @@ logger = logging.getLogger(__name__)
 
 
 
-def Singleton(cls):
+def singleton(cls):
     """Singleton class decorator."""
     if not hasattr(cls, "__singleton__"):
         cls.__singleton__ = None

@@ -23,9 +23,9 @@ class DrugCell(QWidget, Ui_DrugCell):
         super().__init__()
         self.setupUi(self)
 
-        self.initUi()
+        self.build()
 
-    def initUi(self):
+    def build(self):
         self.decoctionIconLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         decoctionIconSize = min(self.nameLabel.height(), 16)

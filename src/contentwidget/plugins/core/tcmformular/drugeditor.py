@@ -17,13 +17,13 @@ class DrugEditor(QWidget, Ui_DrugEditor):
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setStyleSheet("DrugEditor{background-color:#f0f0f0;}")
 
-        self.initUi()
+        self.build()
 
         # important to solve the focus problem when first appears on the view
         self.setFocusProxy(self.nameEdit)
         self._setDropShadow()
 
-    def initUi(self) -> None:
+    def build(self) -> None:
         self.unitComboBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.decoctionComboBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.unitComboBox.addItems(DrugUnit)

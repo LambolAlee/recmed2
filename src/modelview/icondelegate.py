@@ -2,7 +2,7 @@
 From Source: https://github.com/Liniyous/ElaWidgetTools/blob/main/example/ModelView/T_IconDelegate.cpp
 """
 from PySide6.QtCore import QObject, QModelIndex, Qt, QSize
-from PySide6.QtGui import QPainter, QFont
+from PySide6.QtGui import QPainter, QFont, QPalette, QBrush, QColor
 from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem, QStyle
 
 from recmedtyping import RMIconType
@@ -20,6 +20,14 @@ class IconDelegate(QStyledItemDelegate):
         if option.state & QStyle.StateFlag.State_HasFocus:
             opt.state &= ~QStyle.StateFlag.State_HasFocus
         super().paint(painter, opt, index)
+
+        painter.save()
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setPen(Qt.GlobalColor.transparent)
+        if option.state & (QStyle.StateFlag.State_Selected | QStyle.StateFlag.State_MouseOver):
+            painter.setBrush(QColor("#c0c0c0"))
+        painter.drawRoundedRect(option.rect,8,8)
+        painter.restore()
 
         icon = RMIconType[index.data(Qt.ItemDataRole.UserRole)]
         painter.save()

@@ -1,23 +1,39 @@
-from typing import Self
+from typing import Self, Optional
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QComboBox, QCheckBox
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QToolButton
 
 from .descriptor import DescriptiveAttr, DescriptiveWidget
-from recmedtyping import RMIconType
+from recmedtyping import RMIconType, getIcon
+from ui.iconselector import IconSelector
 
 
-# TODO: wraite a icon selector widget
+
 class DIconWidget(DescriptiveWidget):
     def __init__(self, obj: "DIcon", parent: QWidget | None=None) -> None:
         super().__init__(parent)
         self.attr = obj
+        self._icon = None
+        self._iconSelector = IconSelector()
+        self._iconSelector.iconSelected.connect(self.setIcon)
 
     def build(self) -> Self:
-        layout = QVBoxLayout()
+        layout = QHBoxLayout()
         layout.setContentsMargins(0,0,0,0)
-        self.comboBox = QComboBox(self)
-        self.comboBox.addItems([icon.value for icon in RMIconType])
-        layout.addWidget(self.comboBox)
+        layout.setSpacing(0)
+
+        self.selectButton = QToolButton(self)
+        self.selectButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.selectButton.setText("Click to select icon...")
+        self.selectButton.clicked.connect(self.onSelectButtonClicked)
+        layout.addWidget(self.selectButton)
+
+        self.clearButton = QToolButton(self)
+        self.clearButton.setIcon(getIcon(RMIconType.circleXmark))
+        self.clearButton.clicked.connect(self.onClearButtonClicked)
+        layout.addWidget(self.clearButton)
+
         self.setLayout(layout)
         return self
 
@@ -27,12 +43,26 @@ class DIconWidget(DescriptiveWidget):
         """
         for key, icon in kwargs.items():
             if key == self.attr.public_name:
-                if icon is None:
-                    return
-                self.comboBox.setCurrentText(icon.value)
+                self.setIcon(icon)
 
     def data(self) -> dict:
-        return {self.attr.public_name: RMIconType[self.comboBox.currentText()]}
+        return {self.attr.public_name: self._icon}
+
+    def onSelectButtonClicked(self):
+        self._iconSelector.move(self.selectButton.mapToGlobal(self.selectButton.rect().bottomLeft()))
+        self._iconSelector.show()
+
+    def onClearButtonClicked(self):
+        self.setIcon(None)
+
+    def setIcon(self, icon: Optional[RMIconType]):
+        self._icon = icon
+        if icon is None:
+            self.selectButton.setIcon(QIcon())
+            self.selectButton.setText("Click to select icon...")
+        else:
+            self.selectButton.setIcon(getIcon(icon))
+            self.selectButton.setText(icon.name)
 
 
 class DIcon(DescriptiveAttr):

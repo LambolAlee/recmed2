@@ -31,13 +31,13 @@ class RecMedWindow(FramelessMainWindow, Ui_RecMedWindow):
             QStatusBar{background: #00FF00}
         """)    # TEMP: for test purpose
 
-        self.initUi()
+        self.build()
 
     def setLabelIcon(self) -> None:
         icon = getIcon(RMIconType.airplay)
         self.label.setPixmap(icon.pixmap(30, 30))
 
-    def initUi(self) -> None:
+    def build(self) -> None:
         self.browserMdiArea = fillPlaceholderWidget(self.browserMdiArea, DocumentBrowser(self), self.docsPage.layout())
 
         # 0 -> empty document welcome page

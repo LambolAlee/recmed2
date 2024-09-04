@@ -5,7 +5,7 @@ from typing import List
 from attrs import define, field
 from attrs import validators, Attribute
 
-from utils import Singleton
+from utils import singleton
 from contentwidget.plugins import defines as cwDefines
 
 
@@ -24,7 +24,7 @@ def _check_create_dirs(instance, attribute: Attribute, value: Path) -> Path:
         value.mkdir(parents=True)
     return value
 
-@Singleton
+@singleton
 @define
 class PathManager:
     executablePath: Path = field(init=False, validator=validators.instance_of(Path))

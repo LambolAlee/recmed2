@@ -9,11 +9,11 @@ class DocumentWidget(QWidget, Ui_DocumentWidget):
         super().__init__(parent)
         self.setupUi(self)
 
-        self.initUi()
+        self.build()
 
         self.test_view()
 
-    def initUi(self):
+    def build(self):
         self.scrollArea.setMinimumWidth(650)
 
     def test_view(self):

@@ -17,9 +17,9 @@ class PatientInfoViewport(IViewport, Ui_PatientInfoViewport):
 
         self.datapipe = DataPipe()
 
-        self.initUi()
+        self.build()
 
-    def initUi(self):
+    def build(self):
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
         self.cardTitle = CardTitle("Patient Infomation", self.editPage)

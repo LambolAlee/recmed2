@@ -23,7 +23,7 @@ class FormularDelegate(QStyledItemDelegate):
         self.initStyleOption(opt, index)
 
         if opt.state & QStyle.StateFlag.State_HasFocus:
-            opt.state ^= QStyle.StateFlag.State_HasFocus
+            opt.state &= ~QStyle.StateFlag.State_HasFocus
 
         style: QStyle = opt.widget.style() if opt.widget else qApp.style()
         style.drawControl(QStyle.ControlElement.CE_ItemViewItem, opt, painter, opt.widget)
