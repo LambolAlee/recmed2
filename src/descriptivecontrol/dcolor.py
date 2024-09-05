@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QWidget, QHBoxLayout, QToolButton
 
 from .descriptor import DescriptiveAttr, DescriptiveWidget
 from ui.colorlineedit import ColorLineEdit
-from ui.colorwheel import ColorWheel
+from ui.colorwheelpopup import ColorWheelPopup
 from recmedtyping import getIcon, RMIconType
 
 
@@ -43,7 +43,7 @@ class DColorWidget(DescriptiveWidget):
         return {self.attr.public_name: self.lineEdit.color}
 
     def onColorButtonClicked(self) -> None:
-        self._popup = ColorWheel.popup(self.colorButton.mapToGlobal(self.colorButton.rect().bottomLeft()))
+        self._popup = ColorWheelPopup.popup(self.colorButton.mapToGlobal(self.colorButton.rect().bottomLeft()))
         self._popup.colorDecided.connect(lambda color: self.lineEdit.setColor(color, save=True))
         self._popup.colorSelectionChanged.connect(self.lineEdit.setColor)
         self._popup.cancelled.connect(self.lineEdit.restore)

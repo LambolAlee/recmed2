@@ -2,7 +2,7 @@ from math import sqrt, sin, cos, asin, copysign
 from typing import Tuple
 
 from PySide6.QtCore import Qt, QSize, QRect, QPoint, Signal
-from PySide6.QtGui import QColor, QConicalGradient, QKeyEvent, QMouseEvent, QPen, QBrush, QPainter, QPaintEvent, QLinearGradient, QPainterPath
+from PySide6.QtGui import QColor, QConicalGradient, QFocusEvent, QKeyEvent, QMouseEvent, QPen, QBrush, QPainter, QPaintEvent, QLinearGradient, QPainterPath
 from PySide6.QtWidgets import QWidget
 
 
@@ -15,13 +15,9 @@ class DPoint(QPoint):
 
 class ColorWheel(QWidget):
     colorSelectionChanged = Signal(QColor)
-    colorDecided = Signal(QColor)
-    cancelled = Signal()
 
     def __init__(self, centerX: int, centerY: int, meanRadius: int, wheelWidth: int, parent: QWidget | None=None):
         super().__init__(parent)
-        self.setWindowFlags(Qt.WindowType.Popup)
-        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
         self.center = QPoint(centerX, centerY)
         self.meanRadius = meanRadius
@@ -46,12 +42,6 @@ class ColorWheel(QWidget):
 
     def color(self) -> QColor:
         return self._currentSquareColor
-
-    @classmethod
-    def popup(cls, pos: QPoint):
-        w = cls(100, 100, 80, 22)
-        w.move(pos)
-        return w
 
     def _makeWheelBrush(self) -> QBrush:
         gradient = QConicalGradient(self.center, 60)
@@ -180,6 +170,8 @@ class ColorWheel(QWidget):
             DPoint(mousePos - self.center)
         )
 
+        super().mousePressEvent(event)
+
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         mousePos = event.position().toPoint()
 
@@ -191,20 +183,11 @@ class ColorWheel(QWidget):
             lambda *_: self._inWheel,
             DPoint(mousePos - self.center)
         )
+        super().mouseMoveEvent(event)
 
-    def mouseReleaseEvent(self, _: QMouseEvent) -> None:
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         if self._inWheel or self._inSquare:
             self.colorSelectionChanged.emit(self._currentSquareColor)
         self._inWheel = False
         self._inSquare = False
-
-    def keyPressEvent(self, event: QKeyEvent) -> None:
-        match event.key():
-            case Qt.Key.Key_Return:
-                self.colorDecided.emit(self._currentSquareColor)
-                self.close()
-            case Qt.Key.Key_Escape:
-                self.cancelled.emit()
-                self.close()
-            case _:
-                return super().keyReleaseEvent(event)
+        super().mouseReleaseEvent(event)
