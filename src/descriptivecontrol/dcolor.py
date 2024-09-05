@@ -63,10 +63,8 @@ class DColor(DescriptiveAttr):
     def displayName(self) -> str:
         return self.text
 
-    def __get__(self, obj, cls) -> QColor:
-        return getattr(obj, self.private_name, self._default)
+    def default(self):
+        return self._default
 
-    def __set__(self, obj, value):
-        if value is None:
-            value = self._default
-        setattr(obj, self.private_name, QColor(value))
+    def setter(self, obj, value):
+        return self._default if value is None else QColor(value)

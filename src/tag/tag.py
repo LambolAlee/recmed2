@@ -3,16 +3,15 @@ from typing import Optional, Self, Union
 from PySide6.QtGui import QColor
 
 from recmedtyping import RMIconType
-from descriptivecontrol import descriptiveContainer, dtypes
+from descriptivecontrol import DescriptiveContainer, dtypes
 
 
 
-@descriptiveContainer
-class Tag:
-    name: str = dtypes.DStr("tag name")
+class Tag(DescriptiveContainer):
+    name: str = dtypes.DStr("tag name", sendEvent=True)
     bg: QColor = dtypes.DColor(text="background-color", default="#18b868")
     fg: QColor = dtypes.DColor(text="font-color", default="#000000")
-    icon: RMIconType = dtypes.DIcon("icon")
+    icon: Optional[RMIconType] = dtypes.DIcon("icon")
     iconOnly: bool = dtypes.DBool("icon-only", default=False)
 
     def __init__(self, 
@@ -30,26 +29,21 @@ class Tag:
         self.icon = icon
         self.iconOnly = iconOnly
 
-        self.setTextIcon()
+        self._textIcon = None
+        self.updateTextIcon()
 
-    def setTextIcon(self):
-        if self.icon is None:
-            self.icon = self._parseTextIcon()
-            self._textIcon = True
-        else:
-            self._textIcon = False
-
-    def _parseTextIcon(self) -> Optional[RMIconType]:
+    def updateTextIcon(self) -> None:
+        """
+        need to be called after the tag being modified
+        """
         if self.name.startswith(":") and self.name.endswith(">"):
             try:
-                iconEnum = RMIconType[self.name[1:-1]]
+                self._textIcon = RMIconType[self.name[1:-1]]
             except KeyError:    # invalid icon name
-                return None
-            else:
-                return iconEnum
+                self._textIcon = None
 
-    def isTextIconTag(self) -> bool:
-        return self._textIcon
+    def handleEvent(self, sender, **kwargs):
+        self.updateTextIcon()
 
     @classmethod
     def fromDict(cls, d: dict) -> Optional[Self]:
@@ -59,4 +53,13 @@ class Tag:
             return None
 
     def hasIcon(self) -> bool:
-        return self.icon is not None
+        return bool(self.icon or self._textIcon)
+
+    def hasTextIcon(self) -> bool:
+        return bool(self._textIcon)
+
+    def getIcon(self) -> Optional[RMIconType]:
+        if self.icon:
+            return self.icon
+        else:
+            return self._textIcon

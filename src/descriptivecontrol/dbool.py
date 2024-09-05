@@ -40,8 +40,5 @@ class DBool(DescriptiveAttr):
     def displayName(self) -> str:
         return self.text
     
-    def __get__(self, obj, cls):
-        return getattr(obj, self.private_name, self._default)
-    
-    def __set__(self, obj, value: bool):
-        setattr(obj, self.private_name, value)
+    def default(self):
+        return self._default

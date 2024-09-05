@@ -34,7 +34,7 @@ class PillTagWidget(QWidget):
         self.setFixedHeight(30)
         layout = QHBoxLayout()
         layout.setContentsMargins(9,4,9,4)
-        layout.setSpacing(0)
+        layout.setSpacing(2)
         layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
 
         self.label = QLabel(parent=self)
@@ -54,10 +54,10 @@ class PillTagWidget(QWidget):
 
     def updateUi(self):
         if self._tag.hasIcon():
-            if self._tag.iconOnly or self._tag.isTextIconTag():
-                self.label.setText(f'<font style="font-family:recmed-fa6; margin-right: 5px">{self._tag.icon.value}</font>')
+            if self._tag.iconOnly or (self._tag.hasTextIcon() and self._tag.icon is None):
+                self.label.setText(f'<font style="font-family:recmed-fa6; margin-right: 5px">{self._tag.getIcon().value}</font>')
             else:
-                self.label.setText(f'<font style="font-family:recmed-fa6; margin-right: 5px">{self._tag.icon.value}</font> {self._tag.name}')
+                self.label.setText(f'<font style="font-family:recmed-fa6; margin-right: 5px">{self._tag.getIcon().value}</font> {self._tag.name}')
         else:
             self.label.setText(self._tag.name)
 
@@ -71,7 +71,7 @@ class PillTagWidget(QWidget):
                 self.deleteButtonClicked.emit()
                 return
         return super().mouseReleaseEvent(event)
-    
+
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.MouseButton.LeftButton:
             p = event.position().toPoint()

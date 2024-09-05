@@ -1,6 +1,6 @@
 from . import dtypes
 from .descriptor import (
-    descriptiveContainer, 
+    DescriptiveContainer, 
     getDesciptor, 
     getDesciptors,
     DescriptiveAttr,
