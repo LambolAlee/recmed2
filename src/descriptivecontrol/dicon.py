@@ -12,8 +12,7 @@ from ui.iconselector import IconSelector
 
 class DIconWidget(DescriptiveWidget):
     def __init__(self, obj: "DIcon", parent: QWidget | None=None) -> None:
-        super().__init__(parent)
-        self.attr = obj
+        super().__init__(obj, parent)
         self._icon = None
         self._iconSelector = IconSelector()
         self._iconSelector.iconSelected.connect(self.setIcon)
@@ -63,6 +62,7 @@ class DIconWidget(DescriptiveWidget):
         else:
             self.selectButton.setIcon(getIcon(icon))
             self.selectButton.setText(icon.name)
+
 
 
 class DIcon(DescriptiveAttr):

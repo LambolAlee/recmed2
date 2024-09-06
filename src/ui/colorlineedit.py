@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QWidget, QLineEdit
 
@@ -12,13 +12,21 @@ class ColorLineEdit(QLineEdit):
             color = QColor("#79abc9")
         self.setColor(color, True)
 
+        self._editChangeTimer = QTimer(self)
+        self._editChangeTimer.setSingleShot(True)
+        self._editChangeTimer.setInterval(500)
+
         self.textEdited.connect(self.onTextEdited)
+        self._editChangeTimer.timeout.connect(self.processTextEdited)
         self.editingFinished.connect(self.onEditingFinished)
 
-    def onTextEdited(self, text: str):
-        color = string2QColor(text, False)
+    def processTextEdited(self):
+        color = string2QColor(self.text(), False)
         if color.isValid():
-            self.setColor(color)
+            self.setColor(color, True)
+
+    def onTextEdited(self, _: str):
+        self._editChangeTimer.start()
 
     def onEditingFinished(self):
         color = string2QColor(self.text(), False)

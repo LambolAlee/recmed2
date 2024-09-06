@@ -14,8 +14,9 @@ class TagContainer(QWidget):
         self.taglayout = FlowLayout()
         self.taglayout.setSpacing(4)
         self.setLayout(self.taglayout)
-        self._editor = TagEditor(self)
+        self._editor = TagEditor()
         self._editor.editingFinished.connect(self.saveChanges)
+        self._editor.tagRemoveRequest.connect(self.removeTag)
 
         self._pills = []
         self._inEditMode = False

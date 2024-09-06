@@ -15,7 +15,8 @@ class PillTagWidget(QWidget):
 
     def __init__(self, tag: Tag, parent: QWidget | None=None):
         super().__init__(parent)
-        self.setupUi()
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        self.build()
 
         self.tag = tag
         self._inEdit = False
@@ -29,8 +30,7 @@ class PillTagWidget(QWidget):
         self._tag = tag
         self.updateUi()
 
-    def setupUi(self):
-        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+    def build(self):
         self.setFixedHeight(30)
         layout = QHBoxLayout()
         layout.setContentsMargins(9,4,9,4)

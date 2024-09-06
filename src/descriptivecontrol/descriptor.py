@@ -52,6 +52,10 @@ class DescriptiveWidget(QWidget):
     """
     widget created by a descriptive attribute for configuring the value contained by the attribute
     """
+    def __init__(self, obj: "DescriptiveAttr", parent: QWidget | None=None):
+        super().__init__(parent)
+        self.attr = obj
+
     def build(self) -> Self:
         raise NotImplementedError
 
@@ -60,6 +64,10 @@ class DescriptiveWidget(QWidget):
 
     def data(self) -> dict:
         raise NotImplementedError
+    
+    def attributeName(self) -> str:
+        return self.attr.public_name
+
 
 
 class ContainerMeta(type):

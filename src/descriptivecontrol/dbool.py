@@ -6,10 +6,6 @@ from .descriptor import DescriptiveAttr, DescriptiveWidget
 
 
 class DBoolWidget(DescriptiveWidget):
-    def __init__(self, obj: "DBool", parent: QWidget | None=None):
-        super().__init__(parent)
-        self.attr = obj
-
     def build(self) -> Self:
         layout = QHBoxLayout()
         layout.setContentsMargins(0,0,0,0)
@@ -25,6 +21,7 @@ class DBoolWidget(DescriptiveWidget):
 
     def data(self) -> dict:
         return {self.attr.public_name: self.checkBox.isChecked()}
+
 
 
 class DBool(DescriptiveAttr):

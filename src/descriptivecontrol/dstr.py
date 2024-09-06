@@ -7,10 +7,6 @@ from .descriptor import DescriptiveAttr, DescriptiveWidget
 
 
 class DStrWidget(DescriptiveWidget):
-    def __init__(self, obj: "DStr", parent: QWidget | None=None):
-        super().__init__(parent)
-        self.attr = obj
-
     def build(self) -> Self:
         layout = QHBoxLayout()
         layout.setContentsMargins(0,0,0,0)

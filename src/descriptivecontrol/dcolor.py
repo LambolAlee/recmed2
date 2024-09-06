@@ -11,10 +11,6 @@ from recmedtyping import getIcon, RMIconType
 
 
 class DColorWidget(DescriptiveWidget):
-    def __init__(self, obj: "DColor", parent: QWidget | None=None):
-        super().__init__(parent)
-        self.attr = obj
-
     def build(self) -> Self:
         layout = QHBoxLayout()
         layout.setSpacing(0)
@@ -48,6 +44,7 @@ class DColorWidget(DescriptiveWidget):
         self._popup.colorSelectionChanged.connect(self.lineEdit.setColor)
         self._popup.cancelled.connect(self.lineEdit.restore)
         self._popup.show()
+
 
 
 class DColor(DescriptiveAttr):
