@@ -11,6 +11,7 @@ from recmedtyping import RMIconType
 
 class IconView(QListView):
     iconSelected = Signal(RMIconType)
+
     def __init__(self, parent: QWidget | None=None):
         super().__init__(parent)
         self.setUniformItemSizes(True)

@@ -29,7 +29,7 @@ class FormularDelegate(QStyledItemDelegate):
         style.drawControl(QStyle.ControlElement.CE_ItemViewItem, opt, painter, opt.widget)
 
         drugObj: DrugObject = index.data(Qt.ItemDataRole.DisplayRole)
-        self._cell.renderCell(drugObj, painter, opt)
+        self._cell.renderCell(drugObj, painter, option)
 
     # def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
     #     size = super().sizeHint(option, index)
