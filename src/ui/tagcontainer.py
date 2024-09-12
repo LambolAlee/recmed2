@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import QWidget
+from typing import List
+
+from PySide6.QtWidgets import QWidget, QSizePolicy
 
 from tag import Tag
 from utils import FlowLayout
@@ -10,6 +12,7 @@ from .tageditor import TagEditor
 class TagContainer(QWidget):
     def __init__(self, parent: QWidget | None=None) -> None:
         super().__init__(parent)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
         self.taglayout = FlowLayout()
         self.taglayout.setSpacing(4)
@@ -21,13 +24,17 @@ class TagContainer(QWidget):
         self._pills = []
         self._inEditMode = False
 
-    def addTag(self, *tags: Tag):
+    def addTag(self, *tags: Tag) -> List[PillTagWidget]:
+        result = []
         for tag in tags:
             pill = PillTagWidget(tag, self)
             pill.deleteButtonClicked.connect(lambda pill=pill: self.removeTag(pill))
             pill.editing.connect(self.edit)
             self.taglayout.addWidget(pill)
             self._pills.append(pill)
+            
+            result.append(pill)
+        return result
 
     def removeTag(self, pill: PillTagWidget):
         self._pills.remove(pill)
