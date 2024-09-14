@@ -1,0 +1,28 @@
+[project]
+name = "recmed2"
+version = "0.1.0"
+description = "A cute tool that improves yourself from learning to studying in TCM"
+authors = [
+    { name = "Lambol.Michael.Alee", email = "lambol.alee97@gmail.com" }
+]
+dependencies = [
+    "pyside6>=6.2.0,<=6.7.0",
+    "pysidesix-frameless-window>=0.4.3",
+    "peewee>=3.17.6",
+    "pluggy>=1.5.0",
+    "attrs>=24.2.0",
+    "blinker>=1.8.2",
+    "typing-extensions>=4.12.2",
+    "orjson>=3.10.7",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[tool.rye]
+managed = true
+virtual = true
+universal = true
+dev-dependencies = []
+
+[tool.rye.scripts]
+startapp = "python src/main.py"

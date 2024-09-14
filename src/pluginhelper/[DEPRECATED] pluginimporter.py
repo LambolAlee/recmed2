@@ -15,7 +15,7 @@ from importlib.machinery import ModuleSpec, SourceFileLoader
 from importlib.abc import MetaPathFinder
 
 from attrs import define, field, Attribute, asdict
-from ujson import loads
+from orjson import loads
 
 
 

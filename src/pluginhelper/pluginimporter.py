@@ -12,7 +12,7 @@ from functools import wraps
 from importlib import import_module
 
 from attrs import define, field, Attribute, asdict
-from ujson import loads, JSONDecodeError
+from orjson import loads, JSONDecodeError
 
 
 
