@@ -40,10 +40,10 @@ class DrugObject:
         self.dose = self.data["dose"]
         self.unit = DrugUnit(self.data.get("unit", "g"))
         self.decoction = Decoction(self.data.get("decoction", "无"))
-    
+
     def isPlaceholder(self) -> bool:
         return self.data is Placeholder.BLANK
-    
+
     def clear(self) -> None:
         self.data = Placeholder.BLANK
 
@@ -74,9 +74,9 @@ class Formular(UserList):
     columns: int = field(init=False, default=4)
 
     def __attrs_post_init__(self) -> None:
-        self._resetObjectWithData(self._formularData)
+        self._resetWithData(self._formularData)
 
-    def _resetObjectWithData(self, data):
+    def _resetWithData(self, data):
         self.data = []
         self.rows = 0
         rows = max(1, ceil(len(data) / self.columns))
@@ -88,7 +88,7 @@ class Formular(UserList):
 
     def setData(self, formularData: List[DrugDict]):
         self._formularData = formularData
-        self._resetObjectWithData(formularData)
+        self._resetWithData(formularData)
 
     def addRow(self, arow: List[str]):
         self.data.append(DrugObject.map(arow))
@@ -105,7 +105,7 @@ class Formular(UserList):
         for drugObj in chain(*self.data):
             if drugObj.isPlaceholder(): continue
             cleanData.append(drugObj)
-        self._resetObjectWithData(cleanData)
+        self._resetWithData(cleanData)
 
     def __getitem__(self, index: QModelIndex | int) -> DrugObject | List[DrugObject]:
         """
@@ -176,6 +176,7 @@ class FormularTableModel(QAbstractTableModel):
         if role == Qt.ItemDataRole.EditRole:
             self._formular[index] = value
             self.dataChanged.emit(index, index, [Qt.ItemDataRole.DisplayRole])
+            self._updateDrugCount()
         return True
     
     def insertRows(self, row: int, count: int, parent: QModelIndex=QModelIndex()) -> bool:
@@ -203,9 +204,13 @@ class FormularTableModel(QAbstractTableModel):
         selectedIndexes = selectionModel.selectedIndexes()
         for index in selectedIndexes:
             self._formular[index].clear()
-        self.dataChanged.emit(selectedIndexes[0], selectedIndexes[-1], [Qt.DisplayRole])
+        self.dataChanged.emit(selectedIndexes[0], selectedIndexes[-1], [Qt.ItemDataRole.DisplayRole])
+        self._updateDrugCount()
 
-    def add(self) -> QModelIndex:
+    def addNewDrug(self) -> QModelIndex:
+        """
+        Find the first empty cell in the drug table, if no empty cell found, append a new row
+        """
         column = 0
         for drugObj in self._formular[-1]:
             if drugObj.isPlaceholder(): break

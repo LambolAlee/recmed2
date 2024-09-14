@@ -1,43 +1,40 @@
 from typing import Union, cast
 
-from PySide6.QtCore import QObject, Qt, QModelIndex, QRect, QEvent, QPersistentModelIndex, QAbstractItemModel, QSize
-from PySide6.QtGui import QPainter, QMouseEvent
-from PySide6.QtWidgets import QStyledItemDelegate, QStyle, QStyleOptionButton, QStyleOptionViewItem
+from PySide6.QtCore import Qt, QModelIndex, QPersistentModelIndex, QAbstractItemModel, Signal
+from PySide6.QtGui import QPainter, QStandardItemModel, QStandardItem
+from PySide6.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QStyle
 
-from recmedtyping import getIcon, RMIconType
+from ui.fieldline import FieldLine
 
 
 
 class FieldLineDelegate(QStyledItemDelegate):
-    def __init__(self, parent: QObject | None = ...) -> None:
-        super().__init__(parent)
-        self._buttonSize = 32
-        self._iconSize = 16
+    deleteFieldSignal = Signal(QStandardItem)
 
-    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: Union[QModelIndex, QPersistentModelIndex]):
         opt = QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
 
         if opt.state & QStyle.StateFlag.State_HasFocus:
             opt.state &= ~QStyle.StateFlag.State_HasFocus
 
-        style: QStyle = option.widget.style() if option.widget else qApp.style()
-        style.drawControl(QStyle.ControlElement.CE_ItemViewItem, opt, painter, opt.widget)
+        style = option.widget.style() if option.widget else qApp.style()
+        style.drawControl(QStyle.ControlElement.CE_ItemViewItem, opt, painter, option.widget)
 
-        buttonOption = QStyleOptionButton()
-        buttonOption.rect = self.getToolButtonRect(option)
-        buttonOption.icon = getIcon(RMIconType.trashCan)
-        buttonOption.iconSize = QSize(self._iconSize, self._iconSize)
-        style.drawControl(QStyle.ControlElement.CE_PushButton, buttonOption, painter, option.widget)
+    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: Union[QModelIndex, QPersistentModelIndex]) -> QWidget:
+        editor = FieldLine(parent)
+        model: QStandardItemModel = index.model()
+        item: QStandardItem = model.itemFromIndex(index)
+        editor.deleteFieldSignal.connect(lambda item=item: self.deleteFieldSignal.emit(item))
+        return editor
 
-    def getToolButtonRect(self, option: QStyleOptionViewItem) -> QRect:
-        return QRect(option.rect.right() - self._buttonSize, option.rect.top(), self._buttonSize, option.rect.height())
+    def setEditorData(self, editor: QWidget, index: Union[QModelIndex, QPersistentModelIndex]) -> None:
+        editor = cast(FieldLine, editor)
+        editor.setValue(index.data(Qt.ItemDataRole.DisplayRole))
 
-    def editorEvent(self, event: QEvent, model: QAbstractItemModel, option: QStyleOptionViewItem, index: Union[QModelIndex, QPersistentModelIndex]) -> bool:
-        if event.type() == QEvent.Type.MouseButtonRelease:
-            event = cast(QMouseEvent, event)
-            p = event.position().toPoint()
-            if self.getToolButtonRect(option).contains(p):
-                model.removeRow(index.row())
+    def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: Union[QModelIndex, QPersistentModelIndex]) -> None:
+        editor = cast(FieldLine, editor)
+        model.setData(index, editor.value(), Qt.ItemDataRole.DisplayRole)
 
-        return super().editorEvent(event, model, option, index)
+    def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: Union[QModelIndex, QPersistentModelIndex]) -> None:
+        editor.setGeometry(option.rect)

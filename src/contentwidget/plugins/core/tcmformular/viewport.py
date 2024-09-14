@@ -60,7 +60,7 @@ class TCMFormularViewport(IViewport, Ui_TCMFormularViewport):
 
         self.actionRemove.triggered.connect(lambda: self.model.removeDrugs(self.tableView.selectionModel()))
         self.actionTidy.triggered.connect(self.model.tidy)
-        self.actionAdd.triggered.connect(lambda: self.tableView.edit(self.model.add()))
+        self.actionAdd.triggered.connect(lambda: self.tableView.edit(self.model.addNewDrug()))
         self.actionNewRow.triggered.connect(self.model.appendEmptyRow)
 
     def setData(self, data):

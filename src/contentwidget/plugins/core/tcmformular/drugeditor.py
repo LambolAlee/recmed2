@@ -43,8 +43,8 @@ class DrugEditor(QWidget, Ui_DrugEditor):
         if not drugObj.isPlaceholder():
             self.nameEdit.setText(drugObj.name)
             self.doseSpinBox.setValue(drugObj.dose)
-        self.unitComboBox.setCurrentText(drugObj.unit)
-        self.decoctionComboBox.setCurrentText(drugObj.decoction)
+            self.unitComboBox.setCurrentText(drugObj.unit)
+            self.decoctionComboBox.setCurrentText(drugObj.decoction)
 
     def setGeometry(self, rect: QRect):
         self.setFixedWidth(rect.width())

@@ -12,7 +12,7 @@ from functools import wraps
 from importlib import import_module
 
 from attrs import define, field, Attribute, asdict
-from ujson import loads
+from ujson import loads, JSONDecodeError
 
 
 
@@ -65,8 +65,8 @@ class PluginMetadata:
         try:
             data: dict = loads(metadataFile.read_text(encoding='utf-8'))
             return cls(**data)
-        except TypeError as e:  # invalid metadataFile content
-            logger.warning(f"Failed to load plugin metadata from {metadataFile}: {e}")
+        except (TypeError, JSONDecodeError):  # invalid metadataFile content
+            logger.warning(f"Failed to load plugin metadata from `{metadataFile}`")
             return None
 
 
@@ -99,8 +99,8 @@ class PluginImporter:
     def importAllPlugins(self) -> Iterator[Tuple[IPluginEntry, PluginMetadata]]:
         try:
             yield from self.import_(None)
-        except Exception as e:
-            logger.error(f"Import operation failed: {e}")
+        except Exception:
+            logger.error(f"Import operation failed", exc_info=True)
             return list()
 
     @_ensure
@@ -117,8 +117,10 @@ class PluginImporter:
 
         for metadataFile in pluginsFolder.glob("*/metadata.json"):
             metadata = PluginMetadata.fromPath(metadataFile)
-            if metadata is None: continue
-            if packageInfo is not None: 
+            if metadata is None:
+                logger.warning(f"Failed to load plugin `{metadataFile.parent}`")
+                continue
+            if packageInfo is not None:
                 if metadata.isPackage: continue
                 metadata = packageInfo.mergeMetadata(metadata)
             yield metadataFile.parent, metadata

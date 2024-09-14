@@ -27,7 +27,7 @@ class FormularToolBar(QToolBar):
         self.addWidget(drugCountWidget)
         self.addSeparator()
 
-    def setDrugCount(self, count: int):
+    def setDrugCount(self, count: int):     # FIXME: drug count not updated
         self.drugCountLabel.setNum(count)
 
     def eventFilter(self, obj, event) -> bool:
