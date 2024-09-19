@@ -44,7 +44,7 @@ class RecMedApp(QApplication):
             self.runForever()
     
     def testUi(self) -> None:
-        from test.test_field import Test
+        from test.test_colorpicker import Test
         t = Test()
         t.test()
         self.runForever()

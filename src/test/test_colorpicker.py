@@ -1,10 +1,14 @@
-from descriptivecontrol.dcolor import DColor
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QMainWindow
+from ui.colorpicker import ColorPicker, ColorHSSelector, ColorPreview, ColorValueSelector
 
 
 class Test:
     def test(self):
-        self.w = QWidget()
-        self.c = DColor()
-        self.c.setParent(self.w)
+        self.w = QMainWindow()
+        # self.c = ColorHSSelector(self.w)
+        # self.c = ColorPreview(parent=self.w)
+        self.c = ColorValueSelector(parent=self.w)
+        self.c.setWidth(200)
+        # self.c.move(100, 100)
+        self.w.setCentralWidget(self.c)
         self.w.show()
