@@ -91,6 +91,12 @@ class DescriptiveContainer(metaclass=ContainerMeta):
     def handleEvent(self, sender, **kwargs):
         pass
 
+    def getDescriptor(self, attr: str) -> DescriptiveAttr:
+        return getDesciptor(self, attr)
+
+    def getDescriptors(self) -> MappingProxyType[str, DescriptiveAttr]:
+        return getDesciptors(self)
+
     def __getitem__(self, item: str):
         if item in self.__descriptors__:
             return getattr(self, item)

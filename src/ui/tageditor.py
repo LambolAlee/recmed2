@@ -1,13 +1,13 @@
-from typing import List, Self, Optional
+from typing import List, Self
 
-from PySide6.QtCore import Qt, QPoint, Signal, QSize, QTimer, QEvent
+from PySide6.QtCore import Qt, QPoint, Signal, QSize, QEvent
 from PySide6.QtGui import QCloseEvent, QKeyEvent
 from PySide6.QtWidgets import QWidget, QFormLayout, QMessageBox
 
 from ._ui.tageditor_ui import Ui_TagEditor
 from .pilltagwidget import PillTagWidget
 from utils import getMaxMinimumSize
-from descriptivecontrol import getDesciptors, DescriptiveWidget
+from descriptivecontrol import DescriptiveWidget
 
 
 
@@ -43,7 +43,7 @@ class TagEditor(QWidget, Ui_TagEditor):
     def build(self, pill: PillTagWidget) -> Self:
         self._pill = pill
         self.clearLayout()
-        for name, dattr in getDesciptors(pill.tag).items():
+        for name, dattr in pill.tag.getDescriptors().items():
             widget = dattr.widget(self)
             widget.setData(**{name: pill.tag[name]})
             self._widgetList.append(widget)

@@ -1,6 +1,8 @@
-from PySide6.QtCore import Qt, QRect, QPoint, QSize, Signal
-from PySide6.QtGui import QMouseEvent, QPaintEvent, QPainter, QPainterPath, QColor, QLinearGradient, QBrush, QPixmap
-from PySide6.QtWidgets import QWidget
+from typing import Optional
+
+from PySide6.QtCore import Qt, QPoint, Signal
+from PySide6.QtGui import QMouseEvent, QPaintEvent, QPainter, QPainterPath, QColor, QLinearGradient, QBrush, QPixmap, QResizeEvent
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QSizePolicy
 
 
 
@@ -13,7 +15,7 @@ class ColorPreview(QWidget):
         super().__init__(parent)
         self.setFixedSize(40, 256)
 
-        self._previewColor: QColor = color
+        self._previewColor = color
 
     def paintEvent(self, _: QPaintEvent) -> None:
         painter = QPainter(self)
@@ -56,6 +58,10 @@ class ColorSquareWithCircleCursor(QWidget):
     def drawCursor(self, painter: QPainter) -> None:
         raise NotImplementedError
 
+    # override
+    def locate(self, color: QColor):
+        raise NotImplementedError
+
     def _clearBackground(self) -> None:
         self._background = None
         self.update()
@@ -79,7 +85,7 @@ class ColorSquareWithCircleCursor(QWidget):
         pos = event.position().toPoint()
         if self.rect().contains(pos):
             self._aboutToMoveCursor()
-            self._cursorPos = pos
+            self._cursorPos = self.constraint(pos)
         return super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
@@ -104,16 +110,18 @@ class ColorHSSelector(ColorSquareWithCircleCursor):
         super().__init__(parent)
         self.setFixedSize(256, 256)
 
-        self._selectedColor: QColor = DEFAULT_COLOR
+        self.color: QColor = DEFAULT_COLOR
         self._cursorPos = self.rect().bottomLeft()
-
-    def color(self) -> QColor:
-        return self._selectedColor
 
     def calcUnderCursor(self) -> None:
         x, y = self._cursorPos.x(), self._cursorPos.y()
-        self._selectedColor = QColor.fromHsv(x * 360.0 / self.width(), 255 - y * 255.0 / self.height(), 255)
-        self.colorChanged.emit(self._selectedColor)
+        self.color = QColor.fromHsv(x * 360.0 / self.width(), 255 - y * 255.0 / self.height(), 255)
+        self.colorChanged.emit(self.color)
+        self.update()
+
+    def locate(self, color: QColor):
+        self.color = color
+        self._cursorPos = QPoint(color.hsvHue() / 360.0 * self.width(), 255 - color.hsvSaturation() / 255.0 * self.height())
         self.update()
 
     def drawBackgroundGradient(self, painter: QPainter) -> None:
@@ -162,16 +170,15 @@ class ColorHSSelector(ColorSquareWithCircleCursor):
 
 
 class ColorValueSelector(ColorSquareWithCircleCursor):
-    valueChanged = Signal(float)
+    valueChanged = Signal(int)
 
-    def __init__(self, width: int=100, parent: QWidget | None=None) -> None:
+    def __init__(self, parent: QWidget | None=None) -> None:
         super().__init__(parent)
         self.setFixedHeight(12)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
-        self.setWidth(width)
-
+        self.value = 255
         self._basicColor = DEFAULT_COLOR
-        # self._basicColor = QColor("#FFCBE4")
 
     def setBasicColor(self, color: QColor):
         if self._basicColor == color:
@@ -180,15 +187,25 @@ class ColorValueSelector(ColorSquareWithCircleCursor):
         self._basicColor = color
         self._clearBackground()
 
-    def setWidth(self, width: int):
-        self.setFixedWidth(width)
+    def locate(self, color: QColor):
+        basicColor = QColor.fromHsv(color.hsvHue(), color.hsvSaturation(), 255)
+        self.value = color.value()
+        if self.isVisible():
+            self._cursorPos = QPoint(color.value() / 255 * self._effectiveLength + self._cursorOuterR, self.rect().height() / 2)
+        self.setBasicColor(basicColor)
+
+    def resizeEvent(self, event: QResizeEvent):
         tr = self.rect().topRight()
-        self._cursorPos = QPoint(tr.x() - self._cursorOuterR, tr.y() + self.rect().height() / 2)
         self._effectiveLength = self.rect().width() - 2 * self._cursorOuterR
-        self.update()
+        if self.value == 255:
+            self._cursorPos = QPoint(tr.x() - self._cursorOuterR, tr.y() + self.rect().height() / 2)
+        else:
+            self._cursorPos = QPoint(self.value / 255 * self._effectiveLength + self._cursorOuterR, self.rect().height() / 2)
+        return super().resizeEvent(event)
 
     def calcUnderCursor(self) -> None:
-        self.valueChanged.emit(255 - (self._cursorPos.x() - self._cursorOuterR) / self._effectiveLength * 255)
+        self.value = int((self._cursorPos.x() - self._cursorOuterR) / self._effectiveLength * 255)
+        self.valueChanged.emit(self.value)
         self.update()
 
     def constraint(self, mousePos: QPoint) -> QPoint:
@@ -230,5 +247,50 @@ class ColorValueSelector(ColorSquareWithCircleCursor):
 
 
 class ColorPicker(QWidget):
-    def __init__(self, parent: QWidget | None=None) -> None:
+    colorChanged = Signal(QColor)
+
+    def __init__(self, color: QColor | None=None, parent: QWidget | None=None) -> None:
         super().__init__(parent)
+
+        hlayout = QHBoxLayout()
+        hlayout.setContentsMargins(0, 0, 0, 0)
+        hlayout.setSpacing(16)
+        self.hsSelector = ColorHSSelector(self)
+        self.colorPreview = ColorPreview(parent=self)
+        hlayout.addWidget(self.hsSelector)
+        hlayout.addWidget(self.colorPreview)
+
+        vlayout = QVBoxLayout()
+        vlayout.setSpacing(16)
+        self.valueSelector = ColorValueSelector(self)
+        vlayout.addLayout(hlayout)
+        vlayout.addWidget(self.valueSelector)
+
+        self.setLayout(vlayout)
+
+        self.setColor(color)
+
+        self.hsSelector.colorChanged.connect(self.valueSelector.setBasicColor)
+        self.hsSelector.colorChanged.connect(self.previewWithColorChanged)
+        self.valueSelector.valueChanged.connect(self.previewWithValueChanged)
+
+    def setColor(self, color: Optional[QColor]):
+        if color is None:
+            self.color = DEFAULT_COLOR
+        else:
+            self.color = color
+            self.hsSelector.locate(color)
+            self.valueSelector.locate(color)
+            self.colorPreview.preview(color)
+
+    def previewWithColorChanged(self, color: QColor):
+        value = self.valueSelector.value
+        self.color = QColor.fromHsv(color.hsvHue(), color.hsvSaturation(), value)
+        self.colorPreview.preview(self.color)
+        self.colorChanged.emit(self.color)
+
+    def previewWithValueChanged(self, value: int):
+        color = self.hsSelector.color
+        self.color = QColor.fromHsv(color.hsvHue(), color.hsvSaturation(), value)
+        self.colorPreview.preview(self.color)
+        self.colorChanged.emit(self.color)
