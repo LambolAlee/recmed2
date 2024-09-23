@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QLayout,QWidget, QLayoutItem, QStyle, QSizePolicy
 
 
 
-def getMaxMinimumSize(widgets: List[QWidget], parent: QWidget):
+def getMaxMinimumSize(widgets: List[QWidget], parent: QWidget) -> QSize:
     size = QSize()
     for widget in widgets:
         size = size.expandedTo(widget.minimumSize())

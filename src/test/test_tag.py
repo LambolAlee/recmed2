@@ -1,4 +1,4 @@
-from ui.tagcontainer import TagContainer
+from ui.tagarea import TagArea
 from tag import Tag
 from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout
 from descriptivecontrol import getDesciptor
@@ -8,7 +8,7 @@ class Test:
     def test(self):
         self.w = QWidget()
         layout = QVBoxLayout()
-        self.c = TagContainer(self.w)
+        self.c = TagArea(parent=self.w)
         self.tt = Tag("example2", fg="#ff0000")
         self.c.addTag(Tag("example"), self.tt, Tag("hello world", bg="#00ff00"), Tag(":wonSign>"))
         # c.addTag(Tag(":wonSign>"))

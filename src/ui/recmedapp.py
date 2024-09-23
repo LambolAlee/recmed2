@@ -44,7 +44,7 @@ class RecMedApp(QApplication):
             self.runForever()
     
     def testUi(self) -> None:
-        from test.test_tag import Test
+        from test.test_toolarea import Test
         t = Test()
         t.test()
         self.runForever()
