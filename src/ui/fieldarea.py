@@ -28,6 +28,8 @@ class FieldArea(QWidget, Ui_FieldArea):
         self.valueLineEdit.returnPressed.connect(self.addField)
         self._delegate.deleteFieldSignal.connect(self.deleteField)
 
+        self.setVisible(False)
+
     def addField(self):
         if self.keyLineEdit.text() == "":
             return

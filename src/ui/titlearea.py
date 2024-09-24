@@ -1,20 +1,22 @@
-from PySide6.QtWidgets import QLabel, QLineEdit, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QWidget
+
+from ._ui.titlearea_ui import Ui_TitleArea
 
 
-class TitleArea(QWidget):
-    def __init__(self, parent: QWidget | None=None):
+
+class TitleArea(QWidget, Ui_TitleArea):
+    def __init__(self, title: str='New Document', parent: QWidget | None=None):
         super().__init__(parent)
+        self.setupUi(self)
+        self.showLabel.setText(title)
+        self.editLine.setText(title)
 
-        layout = QVBoxLayout()
-        layout.setSpacing(4)
-        self.showLabel = QLabel(self)
-        layout.addWidget(self.showLabel)
-
-        self.editLine = QLineEdit(self)
-        self.editLine.hide()
-        layout.addWidget(self.editLine)
-
-        self.setLayout(layout)
+    def setEditMode(self, editMode: bool):
+        self.stackedWidget.setCurrentIndex(int(editMode))
+        if editMode:
+            self.editLine.setText(self.showLabel.text())
+        else:
+            self.showLabel.setText(self.editLine.text())
 
     def showTitle(self):
         self.editLine.hide()

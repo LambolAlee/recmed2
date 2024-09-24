@@ -16,6 +16,7 @@ class TagArea(QWidget):
         self.hide()
 
         self.taglayout = FlowLayout()
+        self.taglayout.setContentsMargins(9, 0, 9, 0)
         self.taglayout.setSpacing(4)
         self.setLayout(self.taglayout)
         self._editor = TagEditor()

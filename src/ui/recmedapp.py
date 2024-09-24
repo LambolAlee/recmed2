@@ -1,5 +1,5 @@
 import sys
-import _rc
+import _rc  # must! load resources
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QFontDatabase, QFont
@@ -44,7 +44,7 @@ class RecMedApp(QApplication):
             self.runForever()
     
     def testUi(self) -> None:
-        from test.test_toolarea import Test
+        from test.test_metadatawidget import Test
         t = Test()
         t.test()
         self.runForever()
