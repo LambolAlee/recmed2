@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QMdiSubWindow, QWidget
+from PySide6.QtWidgets import QMdiSubWindow, QWidget, QVBoxLayout
 from .documentwidget import DocumentWidget
+from .docmetadatawidget import DocMetadataWidget
 
 
 class Document(QMdiSubWindow):
@@ -13,5 +14,11 @@ class Document(QMdiSubWindow):
         self.test_view()
 
     def test_view(self):
+        self.wrapper = QWidget(self)
+        layout = QVBoxLayout()
         self.docwidget = DocumentWidget(self)
-        self.setWidget(self.docwidget)
+        self.metadatawidget = DocMetadataWidget(self)
+        layout.addWidget(self.metadatawidget, stretch=0)
+        layout.addWidget(self.docwidget, stretch=1)
+        self.wrapper.setLayout(layout)
+        self.setWidget(self.wrapper)

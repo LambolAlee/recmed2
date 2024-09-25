@@ -1,5 +1,4 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QGridLayout, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 
 from .titlearea import TitleArea
 from .toolarea import ToolArea
@@ -12,21 +11,22 @@ class DocMetadataWidget(QWidget):
     def __init__(self, parent: QWidget | None=None):
         super().__init__(parent)
 
-        gridLayout = QGridLayout()
-        gridLayout.setContentsMargins(0,0,0,0)
+        vlayout = QVBoxLayout()
+        vlayout.setContentsMargins(0,0,0,4)
+        vlayout.setSpacing(0)
         self._titleArea = TitleArea(parent=self)
         self._toolArea = ToolArea(self)
-        gridLayout.addWidget(self._titleArea, 0, 0, Qt.AlignmentFlag.AlignLeft)
-        gridLayout.addWidget(self._toolArea, 0, 0, Qt.AlignmentFlag.AlignRight)
+        vlayout.addWidget(self._toolArea)
+        vlayout.addWidget(self._titleArea)
 
         layout = QVBoxLayout()
-        layout.setContentsMargins(0, 4, 0, 4)
+        layout.setContentsMargins(2, 4, 2, 4)
         layout.setSpacing(2)
         self._tagArea = TagArea(parent=self)
         self._fieldArea = FieldArea(self)
-        layout.addLayout(gridLayout)
-        layout.addWidget(self._tagArea)
-        layout.addWidget(self._fieldArea)
+        layout.addLayout(vlayout, stretch=0)
+        layout.addWidget(self._tagArea, stretch=0)
+        layout.addWidget(self._fieldArea, stretch=1)
 
         self.setLayout(layout)
 

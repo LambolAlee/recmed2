@@ -65,7 +65,7 @@ class DrugEditor(QWidget, Ui_DrugEditor):
 
     def focusNextPrevChild(self, next: bool) -> bool:
         """
-        line 6808: https://github1s.com/qt/qtbase/blob/dev/src/widgets/kernel/qwidget.cpp
+        line 6808: https://github.com/qt/qtbase/blob/dev/src/widgets/kernel/qwidget.cpp
         along with the souce code of QStyledItemDelegate, QAbstractItemDelegate, QTableView and QAbstractItemView
         
         The editor created by delegate is not a window or subwindow, and meanwhile the parent of the editor is set to the view,

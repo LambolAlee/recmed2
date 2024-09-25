@@ -26,9 +26,10 @@ class DStrWidget(DescriptiveWidget):
 
 
 class DStr(DescriptiveAttr):
-    def __init__(self, displayText: str, sendEvent: bool=False) -> None:
+    def __init__(self, displayText: str, default: str='', sendEvent: bool=False) -> None:
         super().__init__(sendEvent)
         self.displayText = displayText
+        self.defaultText = default
 
     def widget(self, parent: QWidget | None=None) -> DStrWidget:
         _widget = DStrWidget(self, parent=parent).build()
@@ -36,3 +37,6 @@ class DStr(DescriptiveAttr):
 
     def displayName(self) -> str:
         return self.displayText
+    
+    def default(self):
+        return self.defaultText

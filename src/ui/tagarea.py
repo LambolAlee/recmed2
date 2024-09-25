@@ -17,7 +17,7 @@ class TagArea(QWidget):
 
         self.taglayout = FlowLayout()
         self.taglayout.setContentsMargins(9, 0, 9, 0)
-        self.taglayout.setSpacing(4)
+        self.taglayout.setSpacing(2)
         self.setLayout(self.taglayout)
         self._editor = TagEditor()
         self._editor.editingFinished.connect(self.saveChanges)
@@ -37,7 +37,7 @@ class TagArea(QWidget):
                 self.show()
 
     def newTag(self) -> PillTagWidget:
-        pillTag: PillTagWidget = self.addTag(Tag('Input your tag name...'))[0]
+        pillTag: PillTagWidget = self.addTag(Tag())[0]
         self.edit(pillTag)
         return pillTag
 
@@ -49,8 +49,11 @@ class TagArea(QWidget):
             pill.editing.connect(self.edit)
             self.taglayout.addWidget(pill)
             self._pills.append(pill)
-            
             result.append(pill)
+
+            if self._inEditMode:
+                pill.setEditMode(True)
+
         self._updateVisible()
         return result
 

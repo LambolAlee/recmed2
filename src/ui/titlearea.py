@@ -11,6 +11,9 @@ class TitleArea(QWidget, Ui_TitleArea):
         self.showLabel.setText(title)
         self.editLine.setText(title)
 
+        self.showLabel.setFixedHeight(30)
+        self.editLine.setFixedHeight(30)
+
     def setEditMode(self, editMode: bool):
         self.stackedWidget.setCurrentIndex(int(editMode))
         if editMode:

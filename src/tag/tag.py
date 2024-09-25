@@ -8,14 +8,14 @@ from descriptivecontrol import DescriptiveContainer, dtypes
 
 
 class Tag(DescriptiveContainer):
-    name: str = dtypes.DStr("tag-name", sendEvent=True)
+    name: str = dtypes.DStr("tag-name", default='', sendEvent=True)
     bg: QColor = dtypes.DColor(text="background-color", default="#18b868")
     fg: QColor = dtypes.DColor(text="font-color", default="#000000")
     icon: Optional[RMIconType] = dtypes.DIcon("icon")
     iconOnly: bool = dtypes.DBool("icon-only", default=False)
 
     def __init__(self, 
-                 name: str, 
+                 name: str='', 
                  bg: Union[str, QColor, None]=None, 
                  fg: Union[str, QColor, None]=None, 
                  icon: Optional[RMIconType]=None,

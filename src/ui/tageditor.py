@@ -18,7 +18,7 @@ class TagEditor(QWidget, Ui_TagEditor):
     def __init__(self, parent: QWidget | None=None) -> None:
         super().__init__(parent)
         self.setupUi(self)
-        self.setWindowFlags(Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.WindowType.CustomizeWindowHint)
 
         self.tagItemLayout.setRowWrapPolicy(QFormLayout.RowWrapPolicy.DontWrapRows)
         self.tagItemLayout.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.FieldsStayAtSizeHint)
@@ -50,7 +50,7 @@ class TagEditor(QWidget, Ui_TagEditor):
             self.tagItemLayout.addRow(dattr.displayName(), widget)
         self.setFixedSize(self.sizeHint())
         return self
-    
+
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.Type.ActivationChange:
             if not self.isActiveWindow():   # lost focus and close editor
