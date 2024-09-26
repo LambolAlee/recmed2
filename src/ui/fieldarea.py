@@ -1,5 +1,5 @@
 from PySide6.QtGui import QStandardItem
-from PySide6.QtWidgets import QWidget, QHeaderView
+from PySide6.QtWidgets import QWidget
 
 from ._ui.fieldarea_ui import Ui_FieldArea
 from modelview.fieldlinedelegate import FieldLineDelegate
@@ -16,7 +16,7 @@ class FieldArea(QWidget, Ui_FieldArea):
         self._model = FieldModel(self)
         self._delegate = FieldLineDelegate(self)
 
-        self.fieldContainerView.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.fieldContainerView.horizontalHeader().setStretchLastSection(True)
         self.fieldContainerView.setModel(self._model)
         self.fieldContainerView.setItemDelegate(self._delegate)
 
@@ -28,7 +28,8 @@ class FieldArea(QWidget, Ui_FieldArea):
         self.valueLineEdit.returnPressed.connect(self.addField)
         self._delegate.deleteFieldSignal.connect(self.deleteField)
 
-        self.setVisible(False)
+        self.resizeKeyCol()
+        self.setVisible(False)  
 
     def addField(self):
         if self.keyLineEdit.text() == "":
@@ -37,11 +38,17 @@ class FieldArea(QWidget, Ui_FieldArea):
         key = QStandardItem(self.keyLineEdit.text() + ":")
         value = QStandardItem(self.valueLineEdit.text())
         self._model.appendRow([key, value])
+        self.fieldContainerView.openPersistentEditor(self._model.indexFromItem(key))
         self.fieldContainerView.openPersistentEditor(self._model.indexFromItem(value))
 
+        self.resizeKeyCol()
         self.keyLineEdit.clear()
         self.valueLineEdit.clear()
         self.keyLineEdit.setFocus()
 
     def deleteField(self, item: QStandardItem):
         self._model.removeRow(item.row())
+        self.resizeKeyCol()
+
+    def resizeKeyCol(self) -> None:
+        self.fieldContainerView.resizeColumnToContents(0)
