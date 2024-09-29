@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QStandardItem
 from PySide6.QtWidgets import QWidget
 
@@ -17,6 +18,8 @@ class FieldArea(QWidget, Ui_FieldArea):
         self._delegate = FieldLineDelegate(self)
 
         self.fieldContainerView.horizontalHeader().setStretchLastSection(True)
+        self.fieldContainerView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.fieldContainerView.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.fieldContainerView.setModel(self._model)
         self.fieldContainerView.setItemDelegate(self._delegate)
 
@@ -28,8 +31,8 @@ class FieldArea(QWidget, Ui_FieldArea):
         self.valueLineEdit.returnPressed.connect(self.addField)
         self._delegate.deleteFieldSignal.connect(self.deleteField)
 
-        self.resizeKeyCol()
-        self.setVisible(False)  
+        self.resizeToContents()
+        self.setVisible(False)
 
     def addField(self):
         if self.keyLineEdit.text() == "":
@@ -39,16 +42,18 @@ class FieldArea(QWidget, Ui_FieldArea):
         value = QStandardItem(self.valueLineEdit.text())
         self._model.appendRow([key, value])
         self.fieldContainerView.openPersistentEditor(self._model.indexFromItem(key))
-        self.fieldContainerView.openPersistentEditor(self._model.indexFromItem(value))
 
-        self.resizeKeyCol()
+        self.resizeToContents()
         self.keyLineEdit.clear()
         self.valueLineEdit.clear()
         self.keyLineEdit.setFocus()
 
     def deleteField(self, item: QStandardItem):
         self._model.removeRow(item.row())
-        self.resizeKeyCol()
+        self.resizeToContents()
 
-    def resizeKeyCol(self) -> None:
+    def resizeToContents(self) -> None:
         self.fieldContainerView.resizeColumnToContents(0)
+
+        height = sum(self.fieldContainerView.rowHeight(i) for i in range(self._model.rowCount()))
+        self.fieldContainerView.setFixedHeight(height + 1)      # add 1 can display a slim solid line when there is no user-defined field

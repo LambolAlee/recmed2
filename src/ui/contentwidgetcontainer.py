@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QGridLayout
 
 
@@ -7,6 +8,8 @@ class ContentWidgetContainer(QWidget):
         super().__init__(parent)
 
         self.contentLayout = QGridLayout(self)
+        self.contentLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.contentLayout.setContentsMargins(4,0,4,0)
         self.test_view()
 
     def test_view(self):
