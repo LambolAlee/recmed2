@@ -1,21 +1,24 @@
-from PySide6.QtWidgets import QWidget, QSizePolicy, QSpacerItem, QGridLayout
+from PySide6.QtWidgets import QWidget, QHBoxLayout
 
-from ._ui import Ui_DocumentWidget
 from .documentcontent import DocumentContent
+from .sidespace import SideSpace
 
 
-class DocumentWidget(QWidget, Ui_DocumentWidget):
-    def __init__(self, parent: QWidget=None):
+
+class DocumentWidget(QWidget):
+    def __init__(self, parent: QWidget | None=None):
         super().__init__(parent)
-        self.setupUi(self)
 
-        self.build()
+        layout = QHBoxLayout()
+        layout.setSpacing(0)
 
-        self.test_view()
+        self.leftSideSpace = SideSpace(self)
+        layout.addWidget(self.leftSideSpace, stretch=1)
 
-    def build(self):
-        self.scrollArea.setMinimumWidth(650)
+        self.content = DocumentContent(self)
+        layout.addWidget(self.content, stretch=2)
 
-    def test_view(self):
-        self.doccontent = DocumentContent(self.scrollArea)
-        self.scrollArea.setWidget(self.doccontent)
+        self.rightSideSpace = SideSpace(self)
+        layout.addWidget(self.rightSideSpace, stretch=1)
+
+        self.setLayout(layout)
